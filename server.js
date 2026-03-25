@@ -25,6 +25,10 @@ const supabase = (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY)
   ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } })
   : null;
 
+if (!fs.existsSync(reportsDir)) fs.mkdirSync(reportsDir, { recursive: true });
+if (!fs.existsSync(path.dirname(leadsFile))) fs.mkdirSync(path.dirname(leadsFile), { recursive: true });
+if (!fs.existsSync(leadsFile)) fs.writeFileSync(leadsFile, '[]');
+
 async function saveReportPersistent(token, reportPayload) {
   const content = JSON.stringify(reportPayload, null, 2);
   fs.writeFileSync(path.join(reportsDir, `report-${token}.json`), content);
