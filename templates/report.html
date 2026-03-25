@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Market Snapshot</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,sans-serif;background:#fff;color:#111827;font-size:13px;line-height:1.55;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+/* Page break control */
+.no-break,.card,.signal-card,.comp-row,.qw-row,.tam-row,.opp-card,.locked-section,.trend-card{page-break-inside:avoid;break-inside:avoid}
+
+/* ── HEADER ── */
+.hdr{background:#0A0A0A;padding:22px 36px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:19px;font-weight:800;color:#fff;letter-spacing:-.5px}.logo span{color:#0071E3}
+.hdr-r{text-align:right}
+.hdr-tag{font-size:9px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:2px}
+.hdr-sub{font-size:12px;font-weight:600;color:rgba(255,255,255,.75)}
+
+/* ── HERO BAND ── */
+.hero{background:linear-gradient(135deg,#EBF4FF 0%,#F0FDF9 100%);padding:24px 36px 22px;border-bottom:1px solid #E5E7EB}
+.pill{display:inline-block;padding:3px 11px;background:#0071E3;color:#fff;border-radius:100px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:9px}
+.hero h1{font-size:22px;font-weight:800;color:#0A0A0A;letter-spacing:-.7px;margin-bottom:5px}
+.hero-meta{font-size:11px;color:#6B7280}.hero-meta strong{color:#374151}
+
+/* ── EXECUTIVE SUMMARY (McKinsey style) ── */
+.exec-summary{background:#F8FAFF;border-left:4px solid #0071E3;padding:16px 20px;margin:0 36px;margin-top:20px;margin-bottom:0;border-radius:0 8px 8px 0}
+.exec-label{font-size:9px;font-weight:800;color:#0071E3;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.exec-text{font-size:12px;color:#1F2937;line-height:1.6;font-weight:500}
+
+/* ── SCORE BAND ── */
+.score-band{background:#0A0A0A;padding:18px 36px;display:flex;align-items:center;gap:20px;margin-top:20px}
+.score-gauge-wrap{flex-shrink:0}
+.score-info{}
+.score-lbl{font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.score-txt{font-size:12px;color:rgba(255,255,255,.7);line-height:1.5}
+
+/* ── CONTENT ── */
+.content{padding:24px 36px}
+.sec{margin-bottom:24px}
+.sec-lbl{font-size:9px;font-weight:800;color:#9CA3AF;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #F3F4F6}
+.divider{height:1px;background:#F3F4F6;margin:22px 0}
+
+/* ── TAM/SAM/SOM bar chart ── */
+.tam-chart-wrap{background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:16px 18px}
+.tam-chart-title{font-size:10px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.tam-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.tam-bar-row:last-child{margin-bottom:0}
+.tam-bar-label{font-size:11px;font-weight:700;color:#374151;width:38px;flex-shrink:0}
+.tam-bar-track{flex:1;height:20px;background:#E5E7EB;border-radius:4px;overflow:hidden;position:relative}
+.tam-bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px}
+.tam-bar-val{font-size:11px;font-weight:700;color:#fff;font-family:'Space Mono',monospace;white-space:nowrap}
+.tam-bar-desc{font-size:10px;color:#6B7280;width:160px;flex-shrink:0;line-height:1.4}
+
+/* ── TREND CARDS ── */
+.trend-card{padding:14px 16px;border-radius:10px;border:1px solid #E5E7EB;background:#fff;margin-bottom:10px}
+.trend-hdr{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.trend-num{width:20px;height:20px;border-radius:5px;background:#0A0A0A;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;flex-shrink:0;margin-top:1px}
+.trend-title{font-size:13px;font-weight:700;color:#0A0A0A;flex:1;line-height:1.3}
+.trend-badge{display:inline-flex;align-items:center;padding:2px 9px;background:#EFF6FF;color:#0071E3;border-radius:100px;font-size:9px;font-weight:800;white-space:nowrap;flex-shrink:0}
+.trend-insight{font-size:12px;color:#4B5563;line-height:1.6;margin-bottom:8px;padding-left:30px}
+.trend-action{font-size:11px;color:#059669;font-weight:700;padding:6px 10px 6px 10px;background:#F0FDF9;border-radius:6px;border-left:3px solid #059669;margin-left:30px}
+
+/* ── SIGNAL CARDS ── */
+.signal-card{padding:13px 15px;border-radius:10px;border:1px solid #E5E7EB;background:#FAFAFA;margin-bottom:9px;display:flex;gap:12px;align-items:flex-start}
+.signal-dot-wrap{flex-shrink:0;padding-top:4px}
+.signal-dot{width:8px;height:8px;background:#059669;border-radius:50%;display:block}
+.signal-headline{font-size:13px;font-weight:700;color:#0A0A0A;margin-bottom:4px;line-height:1.35}
+.signal-source{font-size:9px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.signal-imp{font-size:12px;color:#374151;line-height:1.5}
+.signal-arrow{color:#0071E3;font-weight:800;margin-right:4px}
+
+/* ── COMPETITOR CARDS ── */
+.comp-card{padding:12px 14px;border-radius:10px;border:1px solid #E5E7EB;background:#fff;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start}
+.comp-rank{width:28px;height:28px;border-radius:7px;background:#F3F4F6;color:#374151;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;flex-shrink:0}
+.comp-name{font-size:13px;font-weight:800;color:#0A0A0A;margin-bottom:3px}
+.comp-pos{font-size:12px;color:#6B7280;line-height:1.4;margin-bottom:5px}
+.comp-watch{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#B45309;font-weight:600;background:#FEF3C7;padding:3px 9px;border-radius:6px}
+
+/* ── MARKET MOMENTUM BARS ── */
+.momentum-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.momentum-label{font-size:11px;font-weight:600;color:#374151;width:130px;flex-shrink:0}
+.momentum-track{flex:1;height:14px;background:#F3F4F6;border-radius:4px;overflow:hidden}
+.momentum-fill{height:100%;border-radius:4px}
+.momentum-val{font-size:10px;font-weight:700;color:#6B7280;width:36px;text-align:right;flex-shrink:0;font-family:'Space Mono',monospace}
+
+/* ── QUICK WINS ── */
+.qw-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:10px;border:1px solid #E5E7EB;background:#fff;margin-bottom:8px}
+.qw-badge{padding:3px 9px;border-radius:100px;font-size:9px;font-weight:800;flex-shrink:0;margin-top:2px;text-transform:uppercase;letter-spacing:.4px}
+.qw-high{background:#F0FDF9;color:#059669}
+.qw-med{background:#FEF3C7;color:#B45309}
+.qw-action{font-size:13px;font-weight:700;color:#0A0A0A;margin-bottom:3px;line-height:1.35}
+.qw-time{font-size:11px;color:#9CA3AF}
+
+/* ── OPPORTUNITY ── */
+.opp-card{padding:16px 18px;border-radius:12px;border:2px solid #059669;background:linear-gradient(135deg,#F0FDF9,#ECFDF5)}
+.opp-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px}
+.opp-title{font-size:14px;font-weight:800;color:#0A0A0A;line-height:1.3}
+.opp-urgency{padding:3px 10px;border-radius:100px;font-size:9px;font-weight:800;background:#FEF2F2;color:#DC2626;text-transform:uppercase;letter-spacing:.4px;flex-shrink:0}
+.opp-desc{font-size:12px;color:#374151;line-height:1.65;margin-bottom:10px}
+.opp-next-lbl{font-size:9px;font-weight:800;color:#059669;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.opp-next{font-size:12px;font-weight:700;color:#065F46;padding:8px 12px;background:rgba(5,150,105,.1);border-radius:7px;border-left:3px solid #059669;line-height:1.4}
+
+/* ── LOCKED ── */
+.locked-section{border-radius:10px;overflow:hidden;border:1px solid #E5E7EB;margin-bottom:10px}
+.locked-hdr{padding:12px 16px;background:#F9FAFB;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #E5E7EB}
+.locked-title{font-size:12px;font-weight:700;color:#9CA3AF}
+.lock-chip{font-size:9px;font-weight:800;color:#6B7280;background:#F3F4F6;padding:3px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:.4px}
+.locked-preview{padding:10px 16px;filter:blur(3px);pointer-events:none;user-select:none}
+.blur-line{height:8px;background:#E5E7EB;border-radius:3px;margin-bottom:7px}
+.locked-cta{padding:12px 16px;background:#EFF6FF;border-top:1px solid #BFDBFE;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.locked-cta-plan{font-size:9px;font-weight:800;color:#0071E3;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.locked-cta-text{font-size:11px;color:#374151;line-height:1.5;flex:1}
+.locked-price{font-size:15px;font-weight:800;color:#0A0A0A;font-family:'Space Mono',monospace;flex-shrink:0}
+
+/* ── FOOTER ── */
+.footer{background:#0A0A0A;padding:20px 36px;text-align:center}
+.footer p{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:10px}
+.footer-btn{display:inline-block;padding:10px 26px;background:#0071E3;color:#fff;font-size:12px;font-weight:700;border-radius:8px;text-decoration:none}
+.footer-disc{font-size:9px;color:rgba(255,255,255,.2);margin-top:10px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE (dark, premium) -->
+<div style="background:linear-gradient(135deg,#0A0A0A 0%,#0F172A 60%,#0A1628 100%);padding:40px 36px 36px;position:relative;overflow:hidden">
+  <!-- Background decoration -->
+  <div style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(0,113,227,.2) 0%,transparent 70%)"></div>
+  <div style="position:absolute;bottom:-20px;left:20px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(5,150,105,.12) 0%,transparent 70%)"></div>
+
+  <!-- Logo row -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px">
+    <div class="logo" style="font-size:20px">signal<span>labs</span></div>
+    <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1.5px">Confidential &mdash; For Recipient Only</div>
+  </div>
+
+  <!-- Title block -->
+  <div style="margin-bottom:28px">
+    <div style="display:inline-block;padding:4px 12px;background:rgba(0,113,227,.25);border:1px solid rgba(0,113,227,.4);border-radius:100px;font-size:9px;font-weight:800;color:#60A5FA;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">Free Market Snapshot</div>
+    <h1 style="font-size:28px;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.15;margin-bottom:8px">{{industry}}<br>Market Intelligence Report</h1>
+    <div style="font-size:13px;color:rgba(255,255,255,.5)">Prepared for <strong style="color:rgba(255,255,255,.8)">{{company}}</strong> &nbsp;&bull;&nbsp; {{country}} &nbsp;&bull;&nbsp; {{date}}</div>
+  </div>
+
+  <!-- Key stats row -->
+  <div style="display:flex;gap:12px;position:relative">
+    <div style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 16px;text-align:center">
+      <div style="font-size:22px;font-weight:800;color:#fff;font-family:'Space Mono',monospace;margin-bottom:3px">{{marketScore}}</div>
+      <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.8px">Market Score</div>
+    </div>
+    <div style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 16px;text-align:center">
+      <div style="font-size:22px;font-weight:800;color:#fff;font-family:'Space Mono',monospace;margin-bottom:3px">{{tam_short}}</div>
+      <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.8px">Market Size</div>
+    </div>
+    <div style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 16px;text-align:center">
+      <div style="font-size:22px;font-weight:800;color:#fff;font-family:'Space Mono',monospace;margin-bottom:3px">{{blsYoY}}</div>
+      <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.8px">Sector Growth</div>
+    </div>
+    <div style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 16px;text-align:center">
+      <div style="font-size:22px;font-weight:800;color:#fff;font-family:'Space Mono',monospace;margin-bottom:3px">3</div>
+      <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.8px">Quick Wins</div>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT THIS MEANS FOR YOU (personalized callout) -->
+<div style="background:#FFF7ED;border-left:4px solid #F59E0B;padding:14px 20px;margin:16px 36px 0;border-radius:0 8px 8px 0">
+  <div style="font-size:9px;font-weight:800;color:#B45309;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">What this means for you</div>
+  <div style="font-size:12px;color:#1F2937;line-height:1.6;font-weight:500">You are a <strong>{{stage}}</strong> team of <strong>{{teamSize}}</strong> in <strong>{{industry}}</strong>. Your goal: <strong>{{bigDecision}}</strong>. This report focuses on the signals and data most relevant to that decision.</div>
+</div>
+
+<!-- EXECUTIVE SUMMARY -->
+<div class="exec-summary">
+  <div class="exec-label">Executive Summary</div>
+  <div class="exec-text">{{marketScoreRationale}}</div>
+</div>
+
+<!-- SCORE BAND -->
+<div class="score-band">
+  <!-- SVG Gauge -->
+  <div class="score-gauge-wrap">
+    <svg width="80" height="50" viewBox="0 0 80 50" fill="none">
+      <path d="M10 45 A30 30 0 0 1 70 45" stroke="rgba(255,255,255,.15)" stroke-width="7" stroke-linecap="round" fill="none"/>
+      <path d="M10 45 A30 30 0 0 1 70 45" stroke="#0071E3" stroke-width="7" stroke-linecap="round" fill="none"
+            stroke-dasharray="{{gauge_dash}} 1000" stroke-dashoffset="0"/>
+      <text x="40" y="44" text-anchor="middle" font-family="Space Mono, monospace" font-size="14" font-weight="700" fill="#fff">{{marketScore}}</text>
+    </svg>
+  </div>
+  <div class="score-info">
+    <div class="score-lbl">Market Attractiveness Score &mdash; out of 100</div>
+    <div class="score-txt">{{score_descriptor}} &mdash; based on market size, growth momentum, and competitive density.</div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- MARKET SIZE with SVG bar chart -->
+  <div class="sec">
+    <div class="sec-lbl">Market Size Breakdown &mdash; TAM / SAM / SOM</div>
+    <div class="tam-chart-wrap">
+      <div class="tam-chart-title">Estimated Market Opportunity for {{industry}}</div>
+      <div class="tam-bar-row">
+        <div class="tam-bar-label" style="font-size:10px;color:#9CA3AF">TAM</div>
+        <div class="tam-bar-track"><div class="tam-bar-fill" style="width:100%;background:linear-gradient(90deg,#0071E3,#2563EB)"><span class="tam-bar-val">{{tam_short}}</span></div></div>
+        <div class="tam-bar-desc">{{tam_clean}}</div>
+      </div>
+      <div class="tam-bar-row">
+        <div class="tam-bar-label" style="font-size:10px;color:#9CA3AF">SAM</div>
+        <div class="tam-bar-track"><div class="tam-bar-fill" style="width:55%;background:linear-gradient(90deg,#059669,#10B981)"><span class="tam-bar-val">{{sam_short}}</span></div></div>
+        <div class="tam-bar-desc">{{sam_clean}}</div>
+      </div>
+      <div class="tam-bar-row">
+        <div class="tam-bar-label" style="font-size:10px;color:#9CA3AF">SOM</div>
+        <div class="tam-bar-track"><div class="tam-bar-fill" style="width:20%;background:linear-gradient(90deg,#7C3AED,#8B5CF6)"><span class="tam-bar-val">{{som_short}}</span></div></div>
+        <div class="tam-bar-desc">{{som_clean}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- MARKET MOMENTUM -->
+  <div class="sec">
+    <div class="sec-lbl">Market Momentum Indicators</div>
+    <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:14px 16px">
+      <div class="momentum-row">
+        <div class="momentum-label">Search Interest</div>
+        <div class="momentum-track"><div class="momentum-fill" style="width:{{trends_pct}}%;background:linear-gradient(90deg,#0071E3,#38BDF8)"></div></div>
+        <div class="momentum-val">{{trends_score}}/100</div>
+      </div>
+      <div class="momentum-row">
+        <div class="momentum-label">Employment Growth</div>
+        <div class="momentum-track"><div class="momentum-fill" style="width:{{emp_pct}}%;background:linear-gradient(90deg,#059669,#34D399)"></div></div>
+        <div class="momentum-val">{{blsYoY}}</div>
+      </div>
+      <div class="momentum-row">
+        <div class="momentum-label">News Velocity</div>
+        <div class="momentum-track"><div class="momentum-fill" style="width:{{news_pct}}%;background:linear-gradient(90deg,#7C3AED,#A78BFA)"></div></div>
+        <div class="momentum-val">{{news_count}} art.</div>
+      </div>
+      <div class="momentum-row" style="margin-bottom:0">
+        <div class="momentum-label">Market Opportunity</div>
+        <div class="momentum-track"><div class="momentum-fill" style="width:{{score_pct}}%;background:linear-gradient(90deg,#D97706,#FBBF24)"></div></div>
+        <div class="momentum-val">{{marketScore}}/100</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- TOP 3 TRENDS -->
+  <div class="sec">
+    <div class="sec-lbl">Top 3 Market Trends &mdash; {{industry}}</div>
+    <div class="trend-card">
+      <div class="trend-hdr">
+        <div class="trend-num">1</div>
+        <div class="trend-title">{{trend1_title}}</div>
+        <span class="trend-badge">{{trend1_dataPoint}}</span>
+      </div>
+      <div class="trend-insight">{{trend1_insight}}</div>
+      <div class="trend-action">Action: {{trend1_actionForThem}}</div>
+    </div>
+    <div class="trend-card">
+      <div class="trend-hdr">
+        <div class="trend-num">2</div>
+        <div class="trend-title">{{trend2_title}}</div>
+        <span class="trend-badge">{{trend2_dataPoint}}</span>
+      </div>
+      <div class="trend-insight">{{trend2_insight}}</div>
+      <div class="trend-action">Action: {{trend2_actionForThem}}</div>
+    </div>
+    <div class="trend-card">
+      <div class="trend-hdr">
+        <div class="trend-num">3</div>
+        <div class="trend-title">{{trend3_title}}</div>
+        <span class="trend-badge">{{trend3_dataPoint}}</span>
+      </div>
+      <div class="trend-insight">{{trend3_insight}}</div>
+      <div class="trend-action">Action: {{trend3_actionForThem}}</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- MARKET TREND LINE CHART (SVG) -->
+  <div class="sec">
+    <div class="sec-lbl">Market Search Momentum &mdash; Last 90 Days</div>
+    <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:14px 18px">
+      <div style="font-size:10px;font-weight:700;color:#6B7280;margin-bottom:10px">Search interest trend for &ldquo;{{industry}}&rdquo; (Google Trends, normalized 0&ndash;100)</div>
+      <svg viewBox="0 0 480 80" fill="none" style="width:100%;display:block" preserveAspectRatio="xMidYMid meet">
+        <line x1="0" y1="20" x2="480" y2="20" stroke="#F3F4F6" stroke-width="1"/>
+        <line x1="0" y1="40" x2="480" y2="40" stroke="#F3F4F6" stroke-width="1"/>
+        <line x1="0" y1="60" x2="480" y2="60" stroke="#F3F4F6" stroke-width="1"/>
+        <text x="2" y="18" fill="#D1D5DB" font-size="8" font-family="Space Mono,monospace">100</text>
+        <text x="2" y="38" fill="#D1D5DB" font-size="8" font-family="Space Mono,monospace">50</text>
+        <text x="2" y="58" fill="#D1D5DB" font-size="8" font-family="Space Mono,monospace">25</text>
+        <path d="M24 65 Q72 55 120 50 T216 40 T312 35 T408 {{trend_y_end}} T468 {{trend_y_final}}" stroke="#0071E3" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M24 65 Q72 55 120 50 T216 40 T312 35 T408 {{trend_y_end}} T468 {{trend_y_final}} V78 H24Z" fill="#0071E3" fill-opacity=".08"/>
+        <circle cx="468" cy="{{trend_y_final}}" r="4" fill="#0071E3"/>
+        <text x="420" y="{{trend_label_y}}" fill="#0071E3" font-size="9" font-weight="700" font-family="Space Mono,monospace">{{trends_score}}/100</text>
+        <text x="24" y="77" fill="#9CA3AF" font-size="8" font-family="Space Mono,monospace">90 days ago</text>
+        <text x="390" y="77" fill="#9CA3AF" font-size="8" font-family="Space Mono,monospace">Today</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SIGNALS -->
+  <div class="sec">
+    <div class="sec-lbl">Market Signals This Week</div>
+    <div class="signal-card">
+      <div class="signal-dot-wrap"><span class="signal-dot"></span></div>
+      <div>
+        <div class="signal-source">{{signal1_source}}</div>
+        <div class="signal-headline">{{signal1_headline}}</div>
+        <div class="signal-imp"><span class="signal-arrow">&#8594;</span>{{signal1_implication}}</div>
+      </div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-dot-wrap"><span class="signal-dot"></span></div>
+      <div>
+        <div class="signal-source">{{signal2_source}}</div>
+        <div class="signal-headline">{{signal2_headline}}</div>
+        <div class="signal-imp"><span class="signal-arrow">&#8594;</span>{{signal2_implication}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- COMPETITORS -->
+  <div class="sec">
+    <div class="sec-lbl">Competitor Snapshot &mdash; Top 3</div>
+    <div class="comp-card">
+      <div class="comp-rank">1</div>
+      <div style="flex:1">
+        <div class="comp-name">{{comp1_name}}</div>
+        <div class="comp-pos">{{comp1_positioning}}</div>
+        <span class="comp-watch">&#9888; {{comp1_watchOut}}</span>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-rank">2</div>
+      <div style="flex:1">
+        <div class="comp-name">{{comp2_name}}</div>
+        <div class="comp-pos">{{comp2_positioning}}</div>
+        <span class="comp-watch">&#9888; {{comp2_watchOut}}</span>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-rank">3</div>
+      <div style="flex:1">
+        <div class="comp-name">{{comp3_name}}</div>
+        <div class="comp-pos">{{comp3_positioning}}</div>
+        <span class="comp-watch">&#9888; {{comp3_watchOut}}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- QUICK WINS -->
+  <div class="sec">
+    <div class="sec-lbl">3 Quick Wins You Can Execute Now</div>
+    <div class="qw-row">
+      <span class="qw-badge qw-high">High</span>
+      <div><div class="qw-action">{{qw1_action}}</div><div class="qw-time">{{qw1_timeframe}}</div></div>
+    </div>
+    <div class="qw-row">
+      <span class="qw-badge qw-med">Medium</span>
+      <div><div class="qw-action">{{qw2_action}}</div><div class="qw-time">{{qw2_timeframe}}</div></div>
+    </div>
+    <div class="qw-row">
+      <span class="qw-badge qw-high">High</span>
+      <div><div class="qw-action">{{qw3_action}}</div><div class="qw-time">{{qw3_timeframe}}</div></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PAIN POINT ANALYSIS -->
+  <div class="sec">
+    <div class="sec-lbl">Your Pain Points &mdash; What the Market Data Says</div>
+    <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:16px 18px">
+      <div style="font-size:12px;color:#374151;line-height:1.7;margin-bottom:10px">Based on your identified challenges (<strong>{{pains_readable}}</strong>), here is what the current market data indicates:</div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:12px">
+          <div style="font-size:10px;font-weight:800;color:#0071E3;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Market Context</div>
+          <div style="font-size:11px;color:#4B5563;line-height:1.6">The {{industry}} sector in {{country}} shows {{score_descriptor}} conditions. Employment trends ({{blsYoY}} YoY) and search interest ({{trends_score}}/100) confirm {{trend_context}}.</div>
+        </div>
+        <div style="flex:1;background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:12px">
+          <div style="font-size:10px;font-weight:800;color:#059669;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">What to Watch</div>
+          <div style="font-size:11px;color:#4B5563;line-height:1.6">Your stated goal &mdash; <strong>{{bigDecision}}</strong> &mdash; is supported by the market momentum signals in this report. See the opportunity section below for the recommended path.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- OPPORTUNITY -->
+  <div class="sec">
+    <div class="sec-lbl">Key Opportunity Identified</div>
+    <div class="opp-card">
+      <div class="opp-hdr">
+        <div class="opp-title">{{opportunity_title}}</div>
+        <span class="opp-urgency">{{opportunity_urgency}} Priority</span>
+      </div>
+      <div class="opp-desc">{{opportunity_description}}</div>
+      <div class="opp-next-lbl">Recommended Next Step</div>
+      <div class="opp-next">{{opportunity_nextStep}}</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- LOCKED -->
+  <div class="sec">
+    <div class="sec-lbl">Unlock the Full Intelligence Picture</div>
+    <div class="locked-section">
+      <div class="locked-hdr">
+        <span class="locked-title">Full Competitive Intelligence &mdash; 15 Competitors Deep Analysis</span>
+        <span class="lock-chip">Intel Plan</span>
+      </div>
+      <div class="locked-preview">
+        <div class="blur-line" style="width:80%"></div>
+        <div class="blur-line" style="width:65%"></div>
+        <div class="blur-line" style="width:90%"></div>
+      </div>
+      <div class="locked-cta">
+        <div>
+          <div class="locked-cta-plan">Intel Plan &mdash; $499/mo</div>
+          <div class="locked-cta-text">{{teaserCompetitors}}</div>
+        </div>
+        <div class="locked-price">$499/mo</div>
+      </div>
+    </div>
+    <div class="locked-section">
+      <div class="locked-hdr">
+        <span class="locked-title">Financial Benchmarking &mdash; LTV/CAC &bull; Gross Margin &bull; Burn Rate</span>
+        <span class="lock-chip">Pro Plan</span>
+      </div>
+      <div class="locked-preview">
+        <div class="blur-line" style="width:70%"></div>
+        <div class="blur-line" style="width:55%"></div>
+      </div>
+      <div class="locked-cta">
+        <div>
+          <div class="locked-cta-plan">Pro Plan &mdash; $1,500/mo</div>
+          <div class="locked-cta-text">{{teaserFinancials}}</div>
+        </div>
+        <div class="locked-price">$1,500/mo</div>
+      </div>
+    </div>
+    <div class="locked-section">
+      <div class="locked-hdr">
+        <span class="locked-title">Lead Intelligence &mdash; 50 Qualified Buyers with Intent Signals</span>
+        <span class="lock-chip">Pro Plan</span>
+      </div>
+      <div class="locked-preview">
+        <div class="blur-line" style="width:85%"></div>
+        <div class="blur-line" style="width:50%"></div>
+      </div>
+      <div class="locked-cta">
+        <div>
+          <div class="locked-cta-plan">Pro Plan &mdash; $1,500/mo</div>
+          <div class="locked-cta-text">{{teaserLeads}}</div>
+        </div>
+        <div class="locked-price">$1,500/mo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEXT STEPS ROADMAP -->
+  <div class="sec">
+    <div class="sec-lbl">Your Suggested 30-Day Roadmap</div>
+    <div style="position:relative;padding-left:24px">
+      <div style="position:absolute;left:9px;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,#0071E3,#059669)"></div>
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:14px">
+        <div style="width:20px;height:20px;border-radius:50%;background:#0071E3;color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:-22px">1</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#0A0A0A;margin-bottom:2px">Week 1 &mdash; Immediate</div>
+          <div style="font-size:11px;color:#4B5563;line-height:1.5">{{qw1_action}}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:14px">
+        <div style="width:20px;height:20px;border-radius:50%;background:#0071E3;color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:-22px">2</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#0A0A0A;margin-bottom:2px">Week 2&ndash;3 &mdash; Short Term</div>
+          <div style="font-size:11px;color:#4B5563;line-height:1.5">{{qw3_action}}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="width:20px;height:20px;border-radius:50%;background:#059669;color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:-22px">3</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#0A0A0A;margin-bottom:2px">Week 4 &mdash; Strategic Move</div>
+          <div style="font-size:11px;color:#4B5563;line-height:1.5">{{opportunity_nextStep}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>Ready to unlock the full intelligence picture for your {{industry}} business?</p>
+  <a href="https://signal-labs-omega.vercel.app/#pricing" class="footer-btn">See all plans</a>
+  <div class="footer-disc">Generated by Signal Labs using real data from BLS, NewsAPI, and Google Trends. For strategic reference only.</div>
+</div>
+
+</body>
+</html>

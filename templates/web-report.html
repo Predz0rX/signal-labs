@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Market Report — Signal Labs</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #0A0A0A;
+  --blue: #0071E3;
+  --blue-l: #EFF6FF;
+  --green: #059669;
+  --green-l: #F0FDF9;
+  --amber: #D97706;
+  --red: #DC2626;
+  --g50: #F9FAFB;
+  --g100: #F3F4F6;
+  --g200: #E5E7EB;
+  --g300: #D1D5DB;
+  --g400: #9CA3AF;
+  --g500: #6B7280;
+  --g600: #4B5563;
+  --g700: #374151;
+  --g800: #1F2937;
+  --g900: #111827;
+  --font: 'DM Sans', -apple-system, sans-serif;
+  --mono: 'Space Mono', monospace;
+  --radius: 12px;
+  --max: 860px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); background: #F8FAFF; color: var(--g900); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+/* ── FADE IN ANIMATIONS ── */
+.fade-up { opacity: 0; transform: translateY(24px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+.stagger > * { opacity: 0; transform: translateY(16px); transition: opacity .5s cubic-bezier(.16,1,.3,1), transform .5s cubic-bezier(.16,1,.3,1); }
+.stagger.visible > *:nth-child(1) { opacity:1; transform:translateY(0); transition-delay:.0s }
+.stagger.visible > *:nth-child(2) { opacity:1; transform:translateY(0); transition-delay:.08s }
+.stagger.visible > *:nth-child(3) { opacity:1; transform:translateY(0); transition-delay:.16s }
+.stagger.visible > *:nth-child(4) { opacity:1; transform:translateY(0); transition-delay:.24s }
+.stagger.visible > *:nth-child(5) { opacity:1; transform:translateY(0); transition-delay:.32s }
+
+/* ── HEADER ── */
+.header { background: var(--black); padding: 0 24px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,.06); }
+.header-inner { max-width: var(--max); margin: 0 auto; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+.logo { font-size: 17px; font-weight: 800; color: #fff; text-decoration: none; letter-spacing: -.4px; }
+.logo span { color: var(--blue); }
+.header-badge { display: flex; align-items: center; gap: 8px; }
+.confidential-tag { font-size: 10px; font-weight: 700; color: rgba(255,255,255,.3); text-transform: uppercase; letter-spacing: 1px; }
+
+/* ── HERO COVER ── */
+.cover { background: linear-gradient(135deg, #0A0A0A 0%, #0F1A2E 60%, #081424 100%); padding: 52px 24px 48px; position: relative; overflow: hidden; }
+.cover::before { content: ''; position: absolute; top: -100px; right: -80px; width: 420px; height: 420px; background: radial-gradient(circle, rgba(0,113,227,.18) 0%, transparent 65%); pointer-events: none; }
+.cover::after { content: ''; position: absolute; bottom: -60px; left: -40px; width: 280px; height: 280px; background: radial-gradient(circle, rgba(5,150,105,.1) 0%, transparent 65%); pointer-events: none; }
+.cover-inner { max-width: var(--max); margin: 0 auto; position: relative; }
+.cover-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; background: rgba(0,113,227,.2); border: 1px solid rgba(0,113,227,.35); border-radius: 100px; font-size: 10px; font-weight: 800; color: #93C5FD; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px; }
+.cover-pill::before { content: ''; width: 6px; height: 6px; background: #0071E3; border-radius: 50%; animation: pulse-dot 2s infinite; }
+@keyframes pulse-dot { 0%,100%{opacity:.4;transform:scale(1)} 50%{opacity:1;transform:scale(1.2)} }
+.cover h1 { font-size: clamp(26px, 4vw, 38px); font-weight: 800; color: #fff; letter-spacing: -1.2px; line-height: 1.15; margin-bottom: 10px; }
+.cover h1 em { font-style: normal; color: #60A5FA; }
+.cover-meta { font-size: 13px; color: rgba(255,255,255,.45); margin-bottom: 32px; }
+.cover-meta strong { color: rgba(255,255,255,.75); }
+
+/* ── KPI CARDS ON COVER ── */
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+@media(max-width: 600px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+.kpi-card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: 14px 16px; transition: background .2s; }
+.kpi-card:hover { background: rgba(255,255,255,.09); }
+.kpi-label { font-size: 9px; font-weight: 700; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.kpi-value { font-size: 22px; font-weight: 800; color: #fff; font-family: var(--mono); line-height: 1.1; margin-bottom: 2px; }
+.kpi-sub { font-size: 10px; color: rgba(255,255,255,.35); }
+
+/* ── MAIN CONTENT ── */
+.main { max-width: var(--max); margin: 0 auto; padding: 36px 24px 60px; }
+.section { margin-bottom: 40px; }
+.section-title { font-size: 11px; font-weight: 800; color: var(--g400); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--g100); }
+
+/* ── EXEC SUMMARY BANNER ── */
+.exec-banner { background: #fff; border: 1px solid var(--g200); border-left: 4px solid var(--blue); border-radius: 0 12px 12px 0; padding: 18px 20px; }
+.exec-banner .label { font-size: 10px; font-weight: 800; color: var(--blue); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.exec-banner p { font-size: 14px; color: var(--g700); line-height: 1.65; font-weight: 500; }
+
+/* ── MARKET SCORE ── */
+.score-section { background: #fff; border: 1px solid var(--g200); border-radius: var(--radius); padding: 24px; display: flex; align-items: center; gap: 24px; }
+.score-chart-wrap { width: 120px; height: 120px; flex-shrink: 0; position: relative; }
+.score-chart-wrap canvas { width: 120px !important; height: 120px !important; }
+.score-number { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+.score-number span { display: block; font-size: 26px; font-weight: 800; color: var(--black); font-family: var(--mono); line-height: 1; }
+.score-number small { font-size: 10px; color: var(--g400); font-weight: 600; }
+.score-info { flex: 1; }
+.score-info h3 { font-size: 16px; font-weight: 700; color: var(--black); margin-bottom: 6px; }
+.score-info p { font-size: 13px; color: var(--g500); line-height: 1.65; }
+
+/* ── TAM/SAM/SOM ── */
+.tam-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media(max-width: 540px) { .tam-grid { grid-template-columns: 1fr; } }
+.tam-card { background: #fff; border: 1px solid var(--g200); border-radius: var(--radius); padding: 18px; position: relative; overflow: hidden; }
+.tam-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.tam-card.tam::before { background: linear-gradient(90deg, #0071E3, #38BDF8); }
+.tam-card.sam::before { background: linear-gradient(90deg, #059669, #34D399); }
+.tam-card.som::before { background: linear-gradient(90deg, #7C3AED, #A78BFA); }
+.tam-tag { font-size: 9px; font-weight: 800; color: var(--g400); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.tam-value { font-size: 20px; font-weight: 800; color: var(--black); font-family: var(--mono); margin-bottom: 4px; }
+.tam-desc { font-size: 11px; color: var(--g500); line-height: 1.5; }
+
+/* ── MOMENTUM CHART ── */
+.momentum-card { background: #fff; border: 1px solid var(--g200); border-radius: var(--radius); padding: 20px; }
+.chart-container { position: relative; height: 180px; }
+
+/* ── TREND CARDS ── */
+.trend-card { background: #fff; border: 1px solid var(--g200); border-radius: var(--radius); padding: 18px; margin-bottom: 12px; transition: box-shadow .2s, transform .2s; }
+.trend-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.06); transform: translateY(-1px); }
+.trend-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+.trend-num { width: 24px; height: 24px; border-radius: 6px; background: var(--black); color: #fff; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; font-family: var(--mono); flex-shrink: 0; }
+.trend-title { font-size: 14px; font-weight: 700; color: var(--black); flex: 1; }
+.trend-badge { padding: 2px 10px; background: var(--blue-l); color: var(--blue); border-radius: 100px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.trend-insight { font-size: 13px; color: var(--g600); line-height: 1.65; margin-bottom: 10px; }
+.trend-action { font-size: 12px; color: var(--green); font-weight: 700; padding: 8px 12px; background: var(--green-l); border-radius: 8px; border-left: 3px solid var(--green); }
+.trend-action::before { content: 'Action: '; }
+
+/* ── SIGNALS ── */
+.signal-card { background: #fff; border: 1px solid var(--g200); border-radius: var(--radius); padding: 16px; margin-bottom: 10px; display: flex; gap: 14px; }
+.signal-dot-wrap { padding-top: 4px; flex-shrink: 0; }
+.signal-dot { width: 9px; height: 9px; background: var(--green); border-radius: 50%; animation: pulse-dot 2.5s infinite; }
+.signal-source { font-size: 10px; font-weight: 700; color: var(--g400); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+.signal-headline { font-size: 14px; font-weight: 700; color: var(--black); margin-bottom: 5px; line-height: 1.35; }
+.signal-imp { font-size: 13px; color: var(--g600); line-height: 1.55; }
+.signal-arrow { color: var(--blue); margin-right: 4px; font-weight: 700; }
+
+/* ── COMPETITOR CARDS ── */
+.comp-card { background: #fff; border: 1px solid var(--g200); border-radius: var(--radius); padding: 16px; margin-bottom: 10px; display: flex; gap: 14px; align-items: flex-start; transition: box-shadow .2s; }
+.comp-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.05); }
+.comp-rank { width: 32px; height: 32px; border-radius: 8px; background: var(--g100); color: var(--g600); font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; font-family: var(--mono); flex-shrink: 0; }
+.comp-name { font-size: 14px; font-weight: 800; color: var(--black); margin-bottom: 3px; }
+.comp-pos { font-size: 12px; color: var(--g500); line-height: 1.55; margin-bottom: 7px; }
+.comp-watch { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--amber); font-weight: 700; background: #FEF3C7; padding: 3px 10px; border-radius: 6px; }
+
+/* ── QUICK WINS ── */
+.qw-card { background: #fff; border: 1px solid var(--g200); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 14px; transition: box-shadow .2s; }
+.qw-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.05); }
+.qw-badge { padding: 4px 10px; border-radius: 100px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; flex-shrink: 0; margin-top: 2px; }
+.qw-high { background: var(--green-l); color: var(--green); }
+.qw-med { background: #FEF3C7; color: var(--amber); }
+.qw-action { font-size: 14px; font-weight: 700; color: var(--black); margin-bottom: 3px; line-height: 1.35; }
+.qw-time { font-size: 11px; color: var(--g400); }
+
+/* ── OPPORTUNITY ── */
+.opp-card { background: linear-gradient(135deg, var(--green-l), #ECFDF5); border: 2px solid var(--green); border-radius: var(--radius); padding: 22px; }
+.opp-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.opp-title { font-size: 16px; font-weight: 800; color: var(--black); line-height: 1.3; }
+.opp-urgency { padding: 4px 12px; border-radius: 100px; font-size: 10px; font-weight: 800; background: #FEF2F2; color: var(--red); text-transform: uppercase; flex-shrink: 0; }
+.opp-desc { font-size: 13px; color: var(--g700); line-height: 1.7; margin-bottom: 14px; }
+.opp-next-label { font-size: 10px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; }
+.opp-next { font-size: 13px; font-weight: 700; color: #065F46; padding: 10px 14px; background: rgba(5,150,105,.1); border-radius: 8px; border-left: 3px solid var(--green); line-height: 1.5; }
+
+/* ── PAIN POINT ANALYSIS ── */
+.pain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media(max-width: 540px) { .pain-grid { grid-template-columns: 1fr; } }
+.pain-box { background: #fff; border: 1px solid var(--g200); border-radius: var(--radius); padding: 16px; }
+.pain-box-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 8px; }
+.pain-box.blue .pain-box-title { color: var(--blue); }
+.pain-box.green .pain-box-title { color: var(--green); }
+.pain-box p { font-size: 12px; color: var(--g600); line-height: 1.65; }
+
+/* ── ROADMAP TIMELINE ── */
+.timeline { position: relative; padding-left: 30px; }
+.timeline::before { content: ''; position: absolute; left: 10px; top: 6px; bottom: 6px; width: 2px; background: linear-gradient(180deg, var(--blue), var(--green)); border-radius: 2px; }
+.timeline-item { position: relative; margin-bottom: 20px; }
+.timeline-item:last-child { margin-bottom: 0; }
+.timeline-dot { position: absolute; left: -26px; top: 3px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: #fff; font-family: var(--mono); }
+.timeline-dot.blue { background: var(--blue); }
+.timeline-dot.green { background: var(--green); }
+.timeline-week { font-size: 11px; font-weight: 700; color: var(--g500); margin-bottom: 3px; }
+.timeline-action { font-size: 13px; font-weight: 600; color: var(--black); line-height: 1.45; }
+
+/* ── LOCKED SECTIONS ── */
+.locked-wrap { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--g200); margin-bottom: 12px; }
+.locked-header { padding: 14px 18px; background: var(--g50); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--g200); }
+.locked-title { font-size: 13px; font-weight: 700; color: var(--g400); }
+.locked-chip { font-size: 9px; font-weight: 800; color: var(--g500); background: var(--g100); padding: 3px 10px; border-radius: 100px; text-transform: uppercase; letter-spacing: .5px; }
+.locked-blur { padding: 14px 18px; filter: blur(5px); user-select: none; pointer-events: none; }
+.locked-blur-row { height: 10px; background: var(--g200); border-radius: 4px; margin-bottom: 9px; }
+.locked-cta { padding: 14px 18px; background: var(--blue-l); border-top: 1px solid #BFDBFE; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.locked-plan { font-size: 10px; font-weight: 800; color: var(--blue); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; }
+.locked-teaser { font-size: 12px; color: var(--g700); line-height: 1.5; flex: 1; }
+.locked-price { font-size: 16px; font-weight: 800; color: var(--black); font-family: var(--mono); flex-shrink: 0; }
+.unlock-btn { display: inline-flex; align-items: center; padding: 8px 18px; background: var(--black); color: #fff; border-radius: 8px; font-size: 12px; font-weight: 700; text-decoration: none; transition: background .2s; flex-shrink: 0; }
+.unlock-btn:hover { background: var(--g800); }
+
+/* ── FINAL CTA ── */
+.final-cta { background: var(--black); border-radius: var(--radius); padding: 32px; text-align: center; position: relative; overflow: hidden; }
+.final-cta::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(0,113,227,.2) 0%, transparent 70%); }
+.final-cta h2 { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -.6px; margin-bottom: 8px; position: relative; }
+.final-cta p { font-size: 13px; color: rgba(255,255,255,.5); margin-bottom: 20px; position: relative; }
+.final-cta .cta-btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 28px; background: var(--blue); color: #fff; border-radius: 10px; font-size: 14px; font-weight: 700; text-decoration: none; transition: background .2s, transform .2s; position: relative; }
+.final-cta .cta-btn:hover { background: #0062CC; transform: translateY(-1px); }
+
+/* ── FOOTER ── */
+.footer { text-align: center; padding: 24px; font-size: 11px; color: var(--g400); border-top: 1px solid var(--g100); margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <a href="https://signal-labs-omega.vercel.app" class="logo">signal<span>labs</span></a>
+    <div class="header-badge">
+      <span class="confidential-tag">Confidential Report</span>
+    </div>
+  </div>
+</header>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-inner">
+    <div class="cover-pill fade-up" id="cover-pill">Market Intelligence</div>
+    <h1 class="fade-up" id="cover-title">Your <em id="cover-industry">Market</em><br>Snapshot Report</h1>
+    <p class="cover-meta fade-up" id="cover-meta">
+      Prepared for <strong id="meta-company">—</strong> &nbsp;&bull;&nbsp;
+      <span id="meta-country">—</span> &nbsp;&bull;&nbsp;
+      <span id="meta-date">—</span>
+    </p>
+    <div class="kpi-row stagger" id="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Market Score</div>
+        <div class="kpi-value" id="kpi-score">—</div>
+        <div class="kpi-sub">out of 100</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Market Size</div>
+        <div class="kpi-value" id="kpi-tam">—</div>
+        <div class="kpi-sub">Total Addressable</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Sector Growth</div>
+        <div class="kpi-value" id="kpi-growth">—</div>
+        <div class="kpi-sub">Year over Year</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Quick Wins</div>
+        <div class="kpi-value">3</div>
+        <div class="kpi-sub">Actionable this week</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- EXEC SUMMARY -->
+  <div class="section fade-up">
+    <div class="section-title">Executive Summary</div>
+    <div class="exec-banner">
+      <div class="label">What this means for your business</div>
+      <p id="exec-text">Loading...</p>
+    </div>
+  </div>
+
+  <!-- MARKET SCORE -->
+  <div class="section fade-up">
+    <div class="section-title">Market Attractiveness Score</div>
+    <div class="score-section">
+      <div class="score-chart-wrap">
+        <canvas id="scoreChart"></canvas>
+        <div class="score-number">
+          <span id="score-num">—</span>
+          <small>/100</small>
+        </div>
+      </div>
+      <div class="score-info">
+        <h3 id="score-descriptor">Analyzing...</h3>
+        <p id="score-rationale">Loading market data...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARKET SIZE -->
+  <div class="section fade-up">
+    <div class="section-title">Market Size Breakdown</div>
+    <div class="tam-grid stagger" id="tam-grid">
+      <div class="tam-card tam">
+        <div class="tam-tag">Total Addressable Market</div>
+        <div class="tam-value" id="tam-val">—</div>
+        <div class="tam-desc" id="tam-desc">—</div>
+      </div>
+      <div class="tam-card sam">
+        <div class="tam-tag">Your Segment (SAM)</div>
+        <div class="tam-value" id="sam-val">—</div>
+        <div class="tam-desc" id="sam-desc">—</div>
+      </div>
+      <div class="tam-card som">
+        <div class="tam-tag">Realistic Target (SOM)</div>
+        <div class="tam-value" id="som-val">—</div>
+        <div class="tam-desc" id="som-desc">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOMENTUM CHART -->
+  <div class="section fade-up">
+    <div class="section-title">Market Momentum Indicators</div>
+    <div class="momentum-card">
+      <div class="chart-container">
+        <canvas id="momentumChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP 3 TRENDS -->
+  <div class="section">
+    <div class="section-title">Top 3 Market Trends</div>
+    <div id="trends-container"></div>
+  </div>
+
+  <!-- SIGNALS -->
+  <div class="section fade-up">
+    <div class="section-title">Market Signals This Week</div>
+    <div id="signals-container"></div>
+  </div>
+
+  <!-- COMPETITORS -->
+  <div class="section fade-up">
+    <div class="section-title">Competitor Snapshot — Top 3</div>
+    <div id="competitors-container"></div>
+  </div>
+
+  <!-- PAIN POINT ANALYSIS -->
+  <div class="section fade-up">
+    <div class="section-title">Your Situation — What the Data Says</div>
+    <div class="pain-grid">
+      <div class="pain-box blue">
+        <div class="pain-box-title">Market Context</div>
+        <p id="pain-context">Loading...</p>
+      </div>
+      <div class="pain-box green">
+        <div class="pain-box-title">Strategic Alignment</div>
+        <p id="pain-alignment">Loading...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK WINS -->
+  <div class="section fade-up">
+    <div class="section-title">3 Quick Wins — Execute This Week</div>
+    <div id="qw-container"></div>
+  </div>
+
+  <!-- OPPORTUNITY -->
+  <div class="section fade-up">
+    <div class="section-title">Key Opportunity Identified</div>
+    <div id="opp-container"></div>
+  </div>
+
+  <!-- ROADMAP -->
+  <div class="section fade-up">
+    <div class="section-title">Your 30-Day Roadmap</div>
+    <div class="timeline" id="timeline-container"></div>
+  </div>
+
+  <!-- LOCKED SECTIONS -->
+  <div class="section fade-up">
+    <div class="section-title">Unlock the Full Intelligence Picture</div>
+    <div id="locked-container"></div>
+  </div>
+
+  <!-- FINAL CTA -->
+  <div class="final-cta fade-up">
+    <h2>Ready to unlock the full picture?</h2>
+    <p>Get competitive intelligence, financial benchmarking, and lead lists — updated monthly.</p>
+    <a href="https://signal-labs-omega.vercel.app/#pricing" class="cta-btn">
+      See all plans &rarr;
+    </a>
+  </div>
+
+</main>
+
+<footer class="footer">
+  Generated by Signal Labs using real data from BLS, NewsAPI, and Google Trends. For strategic reference only.
+  &nbsp;&bull;&nbsp; <a href="https://signal-labs-omega.vercel.app" style="color:inherit">signal-labs-omega.vercel.app</a>
+</footer>
+
+<script>
+// ── LOAD REPORT DATA ──
+const token = window.location.pathname.split('/').pop();
+
+async function loadReport() {
+  try {
+    const res = await fetch('/api/report-data/' + token);
+    if (!res.ok) throw new Error('Report not found');
+    const { report, meta } = await res.json();
+    renderReport(report, meta);
+  } catch(e) {
+    document.querySelector('.main').innerHTML = '<div style="text-align:center;padding:60px 20px;color:#6B7280"><h2 style="margin-bottom:8px;color:#0A0A0A">Report not found</h2><p>This link may have expired or is invalid.</p></div>';
+  }
+}
+
+function safe(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function extractShort(str) {
+  if (!str) return '—';
+  const m = str.match(/\$[\d.,]+[BMKbmk]?/);
+  return m ? m[0] : str.split(' ').slice(0,3).join(' ');
+}
+
+function renderReport(r, meta) {
+  // Cover
+  document.getElementById('cover-industry').textContent = meta.industry || 'Market';
+  document.getElementById('cover-title').innerHTML = 'Your <em>' + safe(meta.industry) + '</em><br>Snapshot Report';
+  document.getElementById('meta-company').textContent = meta.company || 'Your Business';
+  document.getElementById('meta-country').textContent = meta.country || 'United States';
+  document.getElementById('meta-date').textContent = meta.date || new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('kpi-score').textContent = r.marketScore || '—';
+  document.getElementById('kpi-tam').textContent = extractShort(r.tam);
+  document.getElementById('kpi-growth').textContent = meta.blsYoY || 'N/A';
+  document.title = meta.industry + ' Market Report — Signal Labs';
+
+  // Exec summary
+  document.getElementById('exec-text').textContent = r.marketScoreRationale || '';
+
+  // Score chart
+  const score = Number(r.marketScore) || 65;
+  document.getElementById('score-num').textContent = score;
+  const scoreDesc = score >= 80 ? 'Highly Attractive Market' : score >= 60 ? 'Solid Opportunity' : score >= 40 ? 'Moderate Conditions' : 'Challenging Market';
+  document.getElementById('score-descriptor').textContent = scoreDesc;
+  document.getElementById('score-rationale').textContent = r.marketScoreRationale || '';
+
+  new Chart(document.getElementById('scoreChart'), {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: [score, 100 - score],
+        backgroundColor: [score >= 70 ? '#0071E3' : score >= 50 ? '#059669' : '#D97706', '#F3F4F6'],
+        borderWidth: 0,
+        cutout: '78%'
+      }]
+    },
+    options: { plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: { duration: 1200, easing: 'easeOutQuart' } }
+  });
+
+  // TAM/SAM/SOM
+  document.getElementById('tam-val').textContent = extractShort(r.tam);
+  document.getElementById('tam-desc').textContent = r.tam || '';
+  document.getElementById('sam-val').textContent = extractShort(r.sam);
+  document.getElementById('sam-desc').textContent = r.sam || '';
+  document.getElementById('som-val').textContent = extractShort(r.som);
+  document.getElementById('som-desc').textContent = r.som || '';
+
+  // Momentum bar chart
+  const trendsScore = Number(meta.trendsScore) || 50;
+  const empRaw = parseFloat((meta.blsYoY || '0').replace('%','').replace('+','')) || 0;
+  const empPct = Math.min(100, Math.max(5, 50 + empRaw * 3));
+  const newsPct = Math.min(100, (Number(meta.newsCount) || 3) * 20);
+
+  new Chart(document.getElementById('momentumChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Search Interest', 'Employment Growth', 'News Velocity', 'Market Score'],
+      datasets: [{
+        data: [trendsScore, Math.round(empPct), newsPct, score],
+        backgroundColor: ['rgba(0,113,227,.8)', 'rgba(5,150,105,.8)', 'rgba(124,58,237,.8)', 'rgba(217,119,6,.8)'],
+        borderRadius: 6,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      scales: {
+        x: { max: 100, grid: { color: '#F3F4F6' }, ticks: { font: { family: "'Space Mono', monospace", size: 10 } } },
+        y: { grid: { display: false }, ticks: { font: { family: "'DM Sans', sans-serif", size: 12 } } }
+      },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + ctx.parsed.x + '/100' } } },
+      animation: { duration: 1000, easing: 'easeOutQuart' }
+    }
+  });
+
+  // Trends
+  const trendsHtml = [r.trend1, r.trend2, r.trend3].map((t, i) => !t ? '' : `
+    <div class="trend-card fade-up">
+      <div class="trend-header">
+        <div class="trend-num">${i+1}</div>
+        <div class="trend-title">${safe(t.title)}</div>
+        <span class="trend-badge">${safe(t.dataPoint)}</span>
+      </div>
+      <div class="trend-insight">${safe(t.insight)}</div>
+      <div class="trend-action">${safe(t.actionForThem)}</div>
+    </div>`).join('');
+  document.getElementById('trends-container').innerHTML = trendsHtml;
+
+  // Signals
+  const signalsHtml = [r.signal1, r.signal2].map(s => !s ? '' : `
+    <div class="signal-card fade-up">
+      <div class="signal-dot-wrap"><span class="signal-dot"></span></div>
+      <div>
+        <div class="signal-source">${safe(s.source)}</div>
+        <div class="signal-headline">${safe(s.headline)}</div>
+        <div class="signal-imp"><span class="signal-arrow">&rarr;</span>${safe(s.implication)}</div>
+      </div>
+    </div>`).join('');
+  document.getElementById('signals-container').innerHTML = signalsHtml;
+
+  // Competitors
+  const comps = r.competitors || [];
+  const compsHtml = comps.slice(0,3).map((c, i) => `
+    <div class="comp-card fade-up">
+      <div class="comp-rank">${i+1}</div>
+      <div style="flex:1">
+        <div class="comp-name">${safe(c.name)}</div>
+        <div class="comp-pos">${safe(c.positioning)}</div>
+        <span class="comp-watch">&#9888; ${safe(c.watchOut)}</span>
+      </div>
+    </div>`).join('');
+  document.getElementById('competitors-container').innerHTML = compsHtml;
+
+  // Pain context
+  const pains = (meta.pains || []).join(', ').replace(/-/g,' ') || 'general growth';
+  document.getElementById('pain-context').textContent = `You are a ${meta.stage || 'growth'} stage team focused on ${pains}. The ${meta.industry} market in ${meta.country} shows ${score >= 70 ? 'strong upward momentum' : score >= 50 ? 'steady conditions' : 'a cautious environment'} with ${meta.blsYoY || 'stable'} employment growth.`;
+  document.getElementById('pain-alignment').textContent = `Your goal of "${meta.bigDecision || 'growing the business'}" is ${score >= 60 ? 'well-supported' : 'achievable'} by current market conditions. The opportunity section below outlines the clearest path forward.`;
+
+  // Quick wins
+  const qws = r.quickWins || [];
+  const qwHtml = qws.map((q, i) => `
+    <div class="qw-card fade-up">
+      <span class="qw-badge ${i===1?'qw-med':'qw-high'}">${q.impact||'High'}</span>
+      <div>
+        <div class="qw-action">${safe(q.action)}</div>
+        <div class="qw-time">${safe(q.timeframe)}</div>
+      </div>
+    </div>`).join('');
+  document.getElementById('qw-container').innerHTML = qwHtml;
+
+  // Opportunity
+  const opp = r.opportunity || {};
+  document.getElementById('opp-container').innerHTML = `
+    <div class="opp-card">
+      <div class="opp-header">
+        <div class="opp-title">${safe(opp.title)}</div>
+        <span class="opp-urgency">${safe(opp.urgency)||'High'} Priority</span>
+      </div>
+      <div class="opp-desc">${safe(opp.description)}</div>
+      <div class="opp-next-label">Recommended Next Step</div>
+      <div class="opp-next">${safe(opp.nextStep)}</div>
+    </div>`;
+
+  // Roadmap
+  const qw0 = qws[0]||{};
+  const qw2 = qws[2]||{};
+  document.getElementById('timeline-container').innerHTML = `
+    <div class="timeline-item"><div class="timeline-dot blue">1</div><div class="timeline-week">Week 1 &mdash; Immediate</div><div class="timeline-action">${safe(qw0.action)}</div></div>
+    <div class="timeline-item"><div class="timeline-dot blue">2</div><div class="timeline-week">Week 2&ndash;3 &mdash; Short Term</div><div class="timeline-action">${safe(qw2.action)}</div></div>
+    <div class="timeline-item"><div class="timeline-dot green">3</div><div class="timeline-week">Week 4 &mdash; Strategic Move</div><div class="timeline-action">${safe(opp.nextStep)}</div></div>`;
+
+  // Locked
+  document.getElementById('locked-container').innerHTML = [
+    { title: 'Full Competitive Intelligence &mdash; 15 Competitors Deep Analysis', plan: 'Intel Plan', teaser: r.teaserCompetitors, price: '$499/mo' },
+    { title: 'Financial Benchmarking &mdash; LTV/CAC &bull; Gross Margin &bull; Burn Rate', plan: 'Pro Plan', teaser: r.teaserFinancials, price: '$1,500/mo' },
+    { title: 'Lead Intelligence &mdash; 50 Qualified Buyers with Intent Signals', plan: 'Pro Plan', teaser: r.teaserLeads, price: '$1,500/mo' }
+  ].map(l => `
+    <div class="locked-wrap">
+      <div class="locked-header"><span class="locked-title">${l.title}</span><span class="locked-chip">${l.plan}</span></div>
+      <div class="locked-blur"><div class="locked-blur-row" style="width:80%"></div><div class="locked-blur-row" style="width:60%"></div><div class="locked-blur-row" style="width:75%"></div></div>
+      <div class="locked-cta">
+        <div><div class="locked-plan">${l.plan}</div><div class="locked-teaser">${safe(l.teaser)}</div></div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="locked-price">${l.price}</div>
+          <a href="https://signal-labs-omega.vercel.app/#pricing" class="unlock-btn">Unlock</a>
+        </div>
+      </div>
+    </div>`).join('');
+
+  // Trigger scroll animations
+  const animObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting) { e.target.classList.add('visible'); animObs.unobserve(e.target); }
+    });
+  }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
+
+  // Observe all fade-up and stagger elements
+  document.querySelectorAll('.fade-up, .stagger').forEach(el => animObs.observe(el));
+
+  // Immediately show elements already in viewport
+  setTimeout(() => {
+    document.querySelectorAll('.fade-up, .stagger').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if(rect.top < window.innerHeight) el.classList.add('visible');
+    });
+  }, 50);
+}
+
+loadReport();
+</script>
+</body>
+</html>

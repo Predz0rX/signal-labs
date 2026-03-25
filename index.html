@@ -1,0 +1,1235 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal Labs — AI Business Intelligence in 48 Hours</title>
+<meta name="description" content="Get your market report in 48 hours, not 8 weeks. AI-powered business intelligence for startups to enterprise — 5x cheaper than traditional consulting.">
+<meta property="og:title" content="Signal Labs — Market Intelligence in 48 Hours">
+<meta property="og:description" content="AI-powered business intelligence that delivers in days what consulting firms take months to produce.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+--white:#FAFAFA;--off-white:#F5F5F7;
+--g50:#F9FAFB;--g100:#F3F4F6;--g200:#E5E7EB;--g300:#D1D5DB;--g400:#9CA3AF;--g500:#6B7280;--g600:#4B5563;--g700:#374151;--g800:#1F2937;--g900:#111827;
+--black:#0A0A0A;--accent:#0071E3;--accent-l:#EBF5FF;--accent-h:#0062CC;
+--green:#059669;--green-l:#ECFDF5;
+--font-s:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+--font-m:'Space Mono',monospace;
+--max-w:1200px;--pad:clamp(80px,12vw,140px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-s);color:var(--g900);background:var(--white);line-height:1.6;overflow-x:hidden}
+img{max-width:100%;display:block}
+.ctn{max-width:var(--max-w);margin:0 auto;padding:0 clamp(20px,5vw,40px)}
+.fade{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.fade.v{opacity:1;transform:translateY(0)}
+.stg>*{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+.stg.v>*:nth-child(1){transition-delay:0s}.stg.v>*:nth-child(2){transition-delay:.07s}.stg.v>*:nth-child(3){transition-delay:.14s}.stg.v>*:nth-child(4){transition-delay:.21s}.stg.v>*:nth-child(5){transition-delay:.28s}.stg.v>*:nth-child(6){transition-delay:.35s}
+.stg.v>*{opacity:1;transform:translateY(0)}
+.tag{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:100px;font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.tag-a{background:var(--accent-l);color:var(--accent)}
+.tag-g{background:var(--green-l);color:var(--green)}
+.sh{text-align:center;max-width:640px;margin:0 auto 56px}
+.sh h2{font-size:clamp(28px,4vw,46px);font-weight:700;letter-spacing:-1.5px;line-height:1.1;color:var(--black);margin:14px 0}
+.sh p{font-size:16px;color:var(--g500);line-height:1.7}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 clamp(20px,5vw,40px);transition:background .3s,box-shadow .3s,backdrop-filter .3s}
+nav.sc{background:rgba(250,250,250,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 1px 0 rgba(0,0,0,.06)}
+.nv{max-width:var(--max-w);margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
+.nl{font-size:18px;font-weight:700;color:var(--black);text-decoration:none;letter-spacing:-.5px}
+.nl span{color:var(--accent)}
+.nk{display:flex;align-items:center;gap:28px;list-style:none}
+.nk a{font-size:14px;font-weight:500;color:var(--g600);text-decoration:none;transition:color .2s}
+.nk a:hover{color:var(--black)}
+.nc{padding:8px 20px;border-radius:8px;background:var(--black);color:var(--white)!important;font-size:13px;font-weight:600;transition:background .2s}
+.nc:hover{background:var(--g800)}
+.nm{display:none;background:0;border:0;cursor:pointer;padding:8px}
+.nm svg{display:block}
+@media(max-width:768px){.nk{display:none}.nm{display:block}.nk.open{display:flex;flex-direction:column;gap:0;position:absolute;top:64px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--g200);padding:12px 24px;box-shadow:0 8px 30px rgba(0,0,0,.08)}.nk.open a{padding:12px 0;display:block}}
+
+/* BUTTONS */
+.bp{padding:14px 28px;border-radius:12px;background:var(--black);color:var(--white);font-size:15px;font-weight:600;text-decoration:none;transition:transform .2s,box-shadow .2s;border:none;cursor:pointer;font-family:var(--font-s);display:inline-flex;align-items:center;gap:8px}
+.bp:hover{transform:translateY(-1px);box-shadow:0 8px 30px rgba(0,0,0,.12)}
+.bs{padding:14px 28px;border-radius:12px;background:0;color:var(--g700);font-size:15px;font-weight:600;text-decoration:none;border:1.5px solid var(--g200);cursor:pointer;font-family:var(--font-s);transition:border-color .2s}
+.bs:hover{border-color:var(--g400)}
+
+/* HERO — rich light */
+.hero{padding:130px 0 0;text-align:center;position:relative;overflow:hidden;background:linear-gradient(160deg,#F0F4FF 0%,#FAFAFA 40%,#F0FDF9 100%)}
+.hero::before{content:'';position:absolute;top:-20%;left:20%;width:50%;height:70%;background:radial-gradient(circle,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;top:10%;right:10%;width:40%;height:60%;background:radial-gradient(circle,rgba(16,185,129,.06) 0%,transparent 70%);pointer-events:none}
+.hero h1{font-size:clamp(34px,5.8vw,68px);font-weight:700;letter-spacing:-2.5px;line-height:1.06;color:var(--black);max-width:780px;margin:0 auto 18px;position:relative}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,#2563EB,#059669);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero>div>.sub{font-size:clamp(15px,2vw,18px);color:var(--g500);max-width:540px;margin:0 auto 32px;line-height:1.7;position:relative}
+
+/* HERO FORM */
+.hero-form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;max-width:500px;margin-left:auto;margin-right:auto;position:relative}
+.hero-form input{flex:1;min-width:220px;padding:14px 18px;border-radius:12px;border:1.5px solid var(--g200);font-size:15px;font-family:var(--font-s);outline:none;transition:border-color .2s,box-shadow .2s;background:#fff}
+.hero-form input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.hero-form button{white-space:nowrap}
+.hero-sub{font-size:12px;color:var(--g400);margin-bottom:16px;position:relative}
+
+/* LOGO BAR */
+.logos{padding:28px 0 40px;position:relative}
+.logos p{text-align:center;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--g400);margin-bottom:14px}
+.logo-row{display:flex;align-items:center;justify-content:center;gap:clamp(20px,4vw,48px);flex-wrap:wrap}
+.logo-item{font-size:clamp(13px,1.6vw,15px);font-weight:700;color:var(--g300);letter-spacing:-.3px;white-space:nowrap}
+
+/* DASHBOARD — premium light with sidebar */
+.dash-section{padding:0 0 80px;position:relative}
+.dash-wrap{max-width:1080px;margin:0 auto;padding:0 clamp(16px,4vw,32px)}
+.dash{background:#fff;border-radius:20px;border:1px solid var(--g200);box-shadow:0 4px 6px rgba(0,0,0,.02),0 20px 60px rgba(0,0,0,.06),0 0 0 1px rgba(0,0,0,.02);overflow:hidden}
+.d-bar{display:flex;align-items:center;gap:8px;padding:14px 18px;border-bottom:1px solid var(--g100);background:var(--g50)}
+.d-dot{width:10px;height:10px;border-radius:50%}
+.d-r{background:#FF5F56}.d-y{background:#FFBD2E}.d-g{background:#27C93F}
+.d-url{flex:1;margin-left:12px;padding:6px 14px;border-radius:8px;background:#fff;border:1px solid var(--g200);font-size:12px;color:var(--g400);font-family:var(--font-m)}
+.d-nav{display:flex;align-items:stretch;min-height:460px}
+.d-side{width:190px;border-right:1px solid var(--g100);padding:16px 10px;display:flex;flex-direction:column;gap:2px;flex-shrink:0;background:var(--g50)}
+@media(max-width:768px){.d-side{display:none}.d-nav{min-height:auto}}
+.d-side-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:500;color:var(--g400);cursor:pointer;transition:all .15s}
+.d-side-item:hover{color:var(--g700);background:var(--g100)}
+.d-side-item.act{background:var(--accent-l);color:var(--accent);font-weight:600}
+.d-side-dot{width:8px;height:8px;border-radius:3px;flex-shrink:0}
+.d-main{flex:1;display:flex;flex-direction:column;background:#fff}
+.d-tabs{display:flex;gap:0;border-bottom:1px solid var(--g100);padding:0 20px}
+.d-tab{padding:13px 18px;font-size:13px;font-weight:500;color:var(--g400);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.d-tab.act{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.d-tab:hover{color:var(--g700)}
+.d-body{padding:20px;flex:1}
+.d-panel{display:none}
+.d-panel.act{display:block}
+.d-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:700px){.d-kpis{grid-template-columns:repeat(2,1fr)}}
+.d-kpi{padding:14px 16px;border-radius:12px;border:1px solid var(--g100);background:linear-gradient(135deg,#FAFBFF 0%,#F9FAFB 100%)}
+.d-kpi-l{font-size:10px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.d-kpi-v{font-size:24px;font-weight:700;color:var(--black);font-family:var(--font-m);letter-spacing:-.5px}
+.d-kpi-c{font-size:11px;font-weight:600;color:var(--green);margin-top:3px}
+.d-chart{border-radius:12px;border:1px solid var(--g100);padding:18px;background:linear-gradient(135deg,#FAFBFF 0%,#F9FAFB 100%);margin-bottom:12px}
+.d-chart-t{font-size:10px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
+.d-chart svg{width:100%;display:block}
+.d-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.d-grid{grid-template-columns:1fr}}
+.d-list{border-radius:12px;border:1px solid var(--g100);padding:14px 16px;background:linear-gradient(135deg,#FAFBFF 0%,#F9FAFB 100%)}
+.d-list-t{font-size:10px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.d-li{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--g100);font-size:13px}
+.d-li:last-child{border:none}
+.d-li-name{color:var(--g600);font-weight:500}
+.d-li-val{color:var(--black);font-weight:600;font-family:var(--font-m);font-size:12px}
+.d-li-tag{font-size:10px;padding:2px 8px;border-radius:100px;font-weight:600}
+.d-li-up{background:var(--green-l);color:var(--green)}
+.d-li-warn{background:#FEF3C7;color:#B45309}
+.d-li-new{background:var(--accent-l);color:var(--accent)}
+/* AI query bar */
+.d-query{display:flex;gap:8px;align-items:center;padding:10px 14px;border-radius:10px;border:1px solid var(--g100);background:linear-gradient(135deg,#EFF6FF 0%,#F0FDF4 100%);margin-top:12px}
+.d-query-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:pulse-dot 2s ease infinite}
+@keyframes pulse-dot{0%,100%{opacity:.4}50%{opacity:1}}
+.d-query span{font-size:12px;color:var(--g400);font-style:italic}
+
+/* STATS */
+.stats{padding:48px 0;border-top:1px solid var(--g100);border-bottom:1px solid var(--g100);background:var(--white)}
+.stats-g{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center}
+@media(max-width:768px){.stats-g{grid-template-columns:repeat(2,1fr)}}
+.st-n{font-size:clamp(26px,4vw,40px);font-weight:700;color:var(--black);letter-spacing:-1px;font-family:var(--font-m)}
+.st-l{font-size:13px;color:var(--g500);margin-top:4px}
+
+/* SEGMENT SELECTOR */
+.seg{padding:var(--pad) 0;background:var(--white)}
+.seg-tabs{display:flex;justify-content:center;gap:8px;margin-bottom:40px;flex-wrap:wrap}
+.seg-tab{padding:10px 20px;border-radius:100px;border:1.5px solid var(--g200);font-size:14px;font-weight:600;color:var(--g500);cursor:pointer;transition:all .2s;background:var(--white);font-family:var(--font-s)}
+.seg-tab.act{background:var(--black);color:var(--white);border-color:var(--black)}
+.seg-tab:hover:not(.act){border-color:var(--g400)}
+.seg-panel{display:none;max-width:800px;margin:0 auto}
+.seg-panel.act{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+@media(max-width:700px){.seg-panel.act{grid-template-columns:1fr}}
+.seg-info h3{font-size:22px;font-weight:700;color:var(--black);letter-spacing:-.5px;margin-bottom:8px}
+.seg-info p{font-size:14px;color:var(--g500);line-height:1.7;margin-bottom:16px}
+.seg-feat{list-style:none}
+.seg-feat li{font-size:13px;color:var(--g600);padding:5px 0 5px 20px;position:relative}
+.seg-feat li::before{content:'';position:absolute;left:0;top:11px;width:8px;height:4px;border-left:2px solid var(--green);border-bottom:2px solid var(--green);transform:rotate(-45deg)}
+.seg-price{margin-top:16px;font-size:14px;color:var(--g400)}
+.seg-price strong{font-size:28px;color:var(--black);font-family:var(--font-m);font-weight:700}
+.seg-visual{background:var(--g50);border-radius:16px;padding:24px;border:1px solid var(--g100);min-height:200px;display:flex;flex-direction:column;gap:12px}
+.seg-mock{background:var(--white);border-radius:10px;padding:14px;border:1px solid var(--g100)}
+.seg-mock-t{font-size:11px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.seg-mock-bars{display:flex;gap:4px;align-items:end;height:40px}
+.seg-mock-bar{flex:1;border-radius:3px 3px 0 0;background:var(--accent);opacity:.3;transition:opacity .3s}
+.seg-mock-bar:nth-child(3){opacity:.6}
+.seg-mock-bar:nth-child(5){opacity:.8}
+.seg-mock-bar:nth-child(7){opacity:1}
+
+/* SERVICES BENTO */
+.svc{padding:var(--pad) 0;background:var(--off-white)}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:900px){.svc-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.svc-grid{grid-template-columns:1fr}}
+.svc-card{padding:28px;border-radius:16px;border:1px solid var(--g200);background:var(--white);transition:border-color .3s,box-shadow .3s,transform .3s;cursor:default;display:flex;flex-direction:column}
+.svc-card:hover{border-color:var(--g300);box-shadow:0 12px 40px rgba(0,0,0,.04);transform:translateY(-2px)}
+.svc-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.svc-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.svc-card h3{font-size:16px;font-weight:600;color:var(--black);letter-spacing:-.2px}
+.svc-benefit{font-size:14px;color:var(--g500);line-height:1.6;margin-bottom:14px}
+.svc-viz{flex:1;background:var(--g50);border-radius:10px;padding:14px;border:1px solid var(--g100);min-height:80px;display:flex;align-items:end}
+.svc-viz svg{width:100%;height:60px;display:block}
+.si-bl{background:var(--accent-l);color:var(--accent)}
+.si-gr{background:var(--green-l);color:var(--green)}
+.si-pu{background:#F3E8FF;color:#7C3AED}
+.si-am{background:#FFF7ED;color:#D97706}
+.si-ro{background:#FFF1F2;color:#E11D48}
+.si-cy{background:#ECFEFF;color:#0891B2}
+
+/* COMPARISON */
+.cmp{padding:var(--pad) 0;background:var(--white)}
+.cmp-table{max-width:800px;margin:0 auto;border-radius:16px;border:1px solid var(--g200);overflow:hidden}
+.cmp-row{display:grid;grid-template-columns:2fr 1fr 1fr;border-bottom:1px solid var(--g100)}
+.cmp-row:last-child{border:none}
+.cmp-row.head{background:var(--g50)}
+.cmp-cell{padding:14px 20px;font-size:13px;color:var(--g600);display:flex;align-items:center}
+.cmp-cell.head{font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--g400)}
+.cmp-cell.feat{font-weight:500;color:var(--g700)}
+.cmp-cell.us{color:var(--accent);font-weight:600}
+.cmp-check{color:var(--green);font-weight:700;font-size:16px}
+.cmp-x{color:var(--g300);font-size:14px}
+@media(max-width:600px){.cmp-row{grid-template-columns:1.5fr 1fr 1fr}.cmp-cell{padding:10px 12px;font-size:12px}}
+
+/* TESTIMONIALS */
+.test{padding:var(--pad) 0;background:var(--off-white)}
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:768px){.test-grid{grid-template-columns:1fr}}
+.test-card{padding:28px;border-radius:16px;border:1px solid var(--g200);background:var(--white)}
+.test-stars{color:#F59E0B;font-size:14px;letter-spacing:2px;margin-bottom:12px}
+.test-quote{font-size:14px;color:var(--g700);line-height:1.7;margin-bottom:16px;font-style:italic}
+.test-author{display:flex;align-items:center;gap:10px}
+.test-avatar{width:36px;height:36px;border-radius:50%;background:var(--g200);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--g500)}
+.test-name{font-size:13px;font-weight:600;color:var(--black)}
+.test-role{font-size:12px;color:var(--g400)}
+
+/* HOW */
+.how{padding:var(--pad) 0;background:var(--white)}
+.how-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;position:relative}
+@media(max-width:768px){.how-steps{grid-template-columns:1fr}}
+.how-step{text-align:center}
+.how-num{width:48px;height:48px;border-radius:50%;background:var(--black);color:var(--white);display:inline-flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;margin-bottom:18px;font-family:var(--font-m)}
+.how-step h3{font-size:17px;font-weight:600;color:var(--black);margin-bottom:6px;letter-spacing:-.3px}
+.how-step p{font-size:14px;color:var(--g500);line-height:1.65;max-width:280px;margin:0 auto}
+
+/* SAMPLE REPORT */
+.report{padding:var(--pad) 0;background:var(--black);position:relative;overflow:hidden}
+.report::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(0,113,227,.12) 0%,transparent 60%);pointer-events:none}
+.report .sh h2{color:var(--white)}
+.report .sh p{color:rgba(255,255,255,.45)}
+.report .tag{background:rgba(0,113,227,.2);color:rgba(255,255,255,.7)}
+.report-preview{max-width:800px;margin:0 auto;background:rgba(255,255,255,.06);border-radius:16px;border:1px solid rgba(255,255,255,.1);padding:32px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:600px){.report-preview{grid-template-columns:1fr;padding:20px}}
+.rp-card{background:rgba(255,255,255,.05);border-radius:10px;padding:16px;border:1px solid rgba(255,255,255,.08)}
+.rp-card-t{font-size:11px;font-weight:600;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.rp-card-v{font-size:28px;font-weight:700;color:var(--white);font-family:var(--font-m);margin-bottom:4px}
+.rp-card-c{font-size:12px;font-weight:600;color:#34D399}
+.rp-chart{background:rgba(255,255,255,.05);border-radius:10px;padding:16px;border:1px solid rgba(255,255,255,.08);grid-column:span 2}
+@media(max-width:600px){.rp-chart{grid-column:span 1}}
+.rp-chart-t{font-size:11px;font-weight:600;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.rp-chart svg{width:100%;height:100px;display:block}
+.report-cta{text-align:center;margin-top:32px}
+.report-cta .bp{background:var(--white);color:var(--black)}
+.report-cta .bp:hover{background:var(--g100)}
+.report-cta p{font-size:12px;color:rgba(255,255,255,.3);margin-top:10px}
+
+/* PRICING */
+.pricing{padding:var(--pad) 0;background:var(--white)}
+.pricing-g{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-items:start}
+@media(max-width:1000px){.pricing-g{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.pricing-g{grid-template-columns:1fr}}
+.pc{padding:28px;border-radius:16px;border:1px solid var(--g100);background:var(--white);position:relative;transition:box-shadow .3s}
+.pc:hover{box-shadow:0 12px 40px rgba(0,0,0,.05)}
+.pc.feat{border-color:var(--black);box-shadow:0 12px 40px rgba(0,0,0,.08)}
+.pc-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);padding:4px 14px;border-radius:100px;background:var(--black);color:var(--white);font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+.pc h3{font-size:16px;font-weight:600;color:var(--black);margin-bottom:4px}
+.pc .pc-desc{font-size:13px;color:var(--g400);margin-bottom:16px}
+.pc-price{font-size:34px;font-weight:700;color:var(--black);letter-spacing:-1px;font-family:var(--font-m)}
+.pc-price span{font-size:14px;font-weight:500;color:var(--g400);letter-spacing:0}
+.pc-equiv{font-size:11px;color:var(--g400);margin-top:2px;margin-bottom:20px}
+.pc-equiv s{color:var(--g300)}
+.pc-feats{list-style:none;margin-bottom:20px}
+.pc-feats li{font-size:13px;color:var(--g600);padding:5px 0 5px 22px;position:relative;line-height:1.5}
+.pc-feats li::before{content:'';position:absolute;left:0;top:9px;width:12px;height:12px;border-radius:50%;background:var(--green-l)}
+.pc-feats li::after{content:'';position:absolute;left:3px;top:13px;width:6px;height:3px;border-left:1.5px solid var(--green);border-bottom:1.5px solid var(--green);transform:rotate(-45deg)}
+.pc-btn{display:block;width:100%;padding:12px;border-radius:10px;text-align:center;font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;border:1.5px solid var(--g200);background:var(--white);color:var(--g700);cursor:pointer;font-family:var(--font-s)}
+.pc-btn:hover{border-color:var(--g400)}
+.pc.feat .pc-btn{background:var(--black);color:var(--white);border-color:var(--black)}
+.pc.feat .pc-btn:hover{background:var(--g800)}
+
+/* FAQ */
+.faq{padding:var(--pad) 0;background:var(--off-white)}
+.faq-list{max-width:720px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--g200)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:22px 0;cursor:pointer;gap:14px;font-size:15px;font-weight:600;color:var(--black);background:0;border:0;width:100%;text-align:left;font-family:var(--font-s)}
+.faq-q:hover{color:var(--accent)}
+.faq-ic{flex-shrink:0;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--g300);display:flex;align-items:center;justify-content:center;transition:transform .3s}
+.faq-item.open .faq-ic{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.16,1,.3,1)}
+.faq-item.open .faq-a{max-height:300px}
+.faq-a-in{padding:0 0 22px;font-size:14px;color:var(--g500);line-height:1.7}
+
+/* FINAL CTA */
+.fcta{padding:var(--pad) 0;background:var(--white)}
+.fcta-box{max-width:640px;margin:0 auto;text-align:center;padding:48px 32px;border-radius:20px;background:var(--g50);border:1px solid var(--g200)}
+.fcta-box h2{font-size:clamp(24px,3.5vw,36px);font-weight:700;color:var(--black);letter-spacing:-1px;margin-bottom:10px}
+.fcta-box p{font-size:15px;color:var(--g500);margin-bottom:28px;line-height:1.7}
+.fcta-form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:420px;margin:0 auto 10px}
+.fcta-form input{flex:1;min-width:200px;padding:14px 18px;border-radius:12px;border:1.5px solid var(--g200);font-size:15px;font-family:var(--font-s);outline:none;background:var(--white);transition:border-color .2s}
+.fcta-form input:focus{border-color:var(--accent)}
+.fcta-sub{font-size:12px;color:var(--g400)}
+
+/* FOOTER */
+footer{padding:40px 0;border-top:1px solid var(--g100)}
+.ft{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.ft-c{font-size:13px;color:var(--g400)}
+.ft-l{display:flex;gap:24px;list-style:none}
+.ft-l a{font-size:13px;color:var(--g400);text-decoration:none;transition:color .2s}
+.ft-l a:hover{color:var(--g700)}
+
+/* STICKY MOBILE CTA */
+.sticky-cta{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99;padding:12px 16px;background:rgba(250,250,250,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--g200);text-align:center}
+.sticky-cta a{display:block;width:100%;padding:14px;border-radius:12px;background:var(--black);color:var(--white);font-size:15px;font-weight:600;text-decoration:none;font-family:var(--font-s)}
+@media(max-width:768px){.sticky-cta{display:block}body{padding-bottom:72px}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+<div class="nv">
+<a href="#" class="nl">signal<span>labs</span></a>
+<ul class="nk" id="nk">
+<li><a href="#services">Services</a></li>
+<li><a href="#pricing">Pricing</a></li>
+<li><a href="#how">How it works</a></li>
+<li><a href="#faq">FAQ</a></li>
+<li><a href="#" onclick="openReportModal();return false;" class="nc">Get your free report</a></li>
+</ul>
+<button class="nm" onclick="document.getElementById('nk').classList.toggle('open')" aria-label="Menu">
+<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+</button>
+</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+<div class="ctn">
+<div class="fade"><span class="tag tag-a">AI-powered intelligence platform</span></div>
+<h1 class="fade">Your next market report.<br><em>Ready in 48 hours.</em></h1>
+<p class="sub fade">Stop waiting 8 weeks for overpriced consulting. Get the same market research, competitive analysis, and strategic insights — powered by AI, validated by experts.</p>
+<div class="hero-form fade">
+<button class="bp" type="button" onclick="openReportModal()">Get my free report <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+</div>
+<p class="hero-sub fade">Free market intelligence report for your industry. No credit card required.</p>
+
+<div class="logos fade">
+<p>Trusted by teams at</p>
+<div class="logo-row">
+<span class="logo-item">Meridian Capital</span>
+<span class="logo-item">Luminary Health</span>
+<span class="logo-item">ScaleForge</span>
+<span class="logo-item">Prism Ventures</span>
+<span class="logo-item">Nexum AI</span>
+</div>
+</div>
+
+<!-- DASHBOARD with sidebar -->
+<div class="dash-section">
+<div class="dash-wrap">
+<div class="dash fade">
+<div class="d-bar">
+<div class="d-dot d-r"></div><div class="d-dot d-y"></div><div class="d-dot d-g"></div>
+<div class="d-url">app.Signal Labs.com/dashboard</div>
+</div>
+<div class="d-nav">
+<div class="d-side">
+<div class="d-side-item act" onclick="showDash(0)"><div class="d-side-dot" style="background:#2563EB"></div>Overview</div>
+<div class="d-side-item" onclick="showDash(1)"><div class="d-side-dot" style="background:#7C3AED"></div>Competitors</div>
+<div class="d-side-item" onclick="showDash(2)"><div class="d-side-dot" style="background:#059669"></div>Financials</div>
+<div class="d-side-item"><div class="d-side-dot" style="background:#D97706"></div>Opportunities</div>
+<div class="d-side-item"><div class="d-side-dot" style="background:#DC2626"></div>Risk alerts</div>
+<div class="d-side-item"><div class="d-side-dot" style="background:#0891B2"></div>Reports</div>
+<div style="flex:1"></div>
+<div class="d-side-item"><div class="d-side-dot" style="background:var(--g300)"></div>Settings</div>
+</div>
+<div class="d-main">
+<div class="d-tabs">
+<div class="d-tab act" onclick="showDash(0)">Market overview</div>
+<div class="d-tab" onclick="showDash(1)">Competitors</div>
+<div class="d-tab" onclick="showDash(2)">Financials</div>
+</div>
+<div class="d-body">
+
+<div class="d-panel act" id="dp0">
+<div class="d-kpis">
+<div class="d-kpi"><div class="d-kpi-l">Total addressable market</div><div class="d-kpi-v">$4.2B</div><div class="d-kpi-c">+18.3% CAGR</div></div>
+<div class="d-kpi"><div class="d-kpi-l">Your segment (SAM)</div><div class="d-kpi-v">$840M</div><div class="d-kpi-c">+22.1% CAGR</div></div>
+<div class="d-kpi"><div class="d-kpi-l">Obtainable (SOM)</div><div class="d-kpi-v">$42M</div><div class="d-kpi-c">Year 3 target</div></div>
+<div class="d-kpi"><div class="d-kpi-l">Active signals</div><div class="d-kpi-v">247</div><div class="d-kpi-c">12 high priority</div></div>
+</div>
+<div class="d-chart">
+<div class="d-chart-t">Market growth projection (2024-2030)</div>
+<svg viewBox="0 0 700 110" fill="none" preserveAspectRatio="xMidYMid meet">
+<line x1="0" y1="20" x2="700" y2="20" stroke="#F3F4F6" stroke-width="1"/>
+<line x1="0" y1="50" x2="700" y2="50" stroke="#F3F4F6" stroke-width="1"/>
+<line x1="0" y1="80" x2="700" y2="80" stroke="#F3F4F6" stroke-width="1"/>
+<text x="0" y="16" fill="#D1D5DB" font-size="9" font-family="'Space Mono',monospace">$10B</text>
+<text x="0" y="46" fill="#D1D5DB" font-size="9" font-family="'Space Mono',monospace">$6B</text>
+<text x="0" y="76" fill="#D1D5DB" font-size="9" font-family="'Space Mono',monospace">$2B</text>
+<path d="M40 95 Q110 90 180 82 T320 64 T460 42 T600 24 T680 12" stroke="#2563EB" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M40 95 Q110 90 180 82 T320 64 T460 42 T600 24 T680 12 V110 H40Z" fill="url(#cg1)"/>
+<path d="M40 96 Q110 92 180 86 T320 74 T460 62 T600 52 T680 44" stroke="#E5E7EB" stroke-width="1.5" fill="none" stroke-dasharray="4 4" stroke-linecap="round"/>
+<circle cx="680" cy="12" r="4" fill="#2563EB"/>
+<text x="648" y="8" fill="#2563EB" font-size="10" font-weight="600" font-family="'Space Mono',monospace">$9.2B</text>
+<circle cx="680" cy="44" r="3" fill="#D1D5DB"/>
+<text x="648" y="40" fill="#9CA3AF" font-size="10" font-family="'Space Mono',monospace">$6.1B</text>
+<defs><linearGradient id="cg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2563EB" stop-opacity=".1"/><stop offset="100%" stop-color="#2563EB" stop-opacity="0"/></linearGradient></defs>
+</svg>
+</div>
+<div class="d-grid">
+<div class="d-list"><div class="d-list-t">Top growth segments</div>
+<div class="d-li"><span class="d-li-name">AI-native SaaS</span><span class="d-li-tag d-li-up">+36%</span></div>
+<div class="d-li"><span class="d-li-name">SMB analytics</span><span class="d-li-tag d-li-up">+28%</span></div>
+<div class="d-li"><span class="d-li-name">Compliance tech</span><span class="d-li-tag d-li-up">+24%</span></div>
+</div>
+<div class="d-list"><div class="d-list-t">Market signals today</div>
+<div class="d-li"><span class="d-li-name">New EU AI regulation draft</span><span class="d-li-tag d-li-warn">Alert</span></div>
+<div class="d-li"><span class="d-li-name">3 competitors raised funding</span><span class="d-li-tag d-li-new">New</span></div>
+<div class="d-li"><span class="d-li-name">Consumer sentiment shift</span><span class="d-li-tag d-li-new">New</span></div>
+</div>
+</div>
+<div class="d-query"><div class="d-query-dot"></div><span>Ask anything — "What's the fastest growing segment in our market?"</span></div>
+</div>
+
+<div class="d-panel" id="dp1">
+<div class="d-kpis">
+<div class="d-kpi"><div class="d-kpi-l">Competitors tracked</div><div class="d-kpi-v">47</div><div class="d-kpi-c">3 new this week</div></div>
+<div class="d-kpi"><div class="d-kpi-l">Pricing changes</div><div class="d-kpi-v">8</div><div class="d-kpi-c">Last 30 days</div></div>
+<div class="d-kpi"><div class="d-kpi-l">Hiring signals</div><div class="d-kpi-v">156</div><div class="d-kpi-c">Engineering +34%</div></div>
+<div class="d-kpi"><div class="d-kpi-l">Your position</div><div class="d-kpi-v">#4</div><div class="d-kpi-c">Up from #7</div></div>
+</div>
+<div class="d-grid">
+<div class="d-list"><div class="d-list-t">Competitive alerts</div>
+<div class="d-li"><span class="d-li-name">Acme Corp raised Series C</span><span class="d-li-tag d-li-new">New</span></div>
+<div class="d-li"><span class="d-li-name">RivalCo launched in APAC</span><span class="d-li-tag d-li-warn">Watch</span></div>
+<div class="d-li"><span class="d-li-name">NexTech cut prices 20%</span><span class="d-li-tag d-li-warn">Watch</span></div>
+<div class="d-li"><span class="d-li-name">DataPrime acquired by SAP</span><span class="d-li-tag d-li-new">New</span></div>
+</div>
+<div class="d-list"><div class="d-list-t">Share of voice</div>
+<div class="d-li"><span class="d-li-name">Your brand</span><span class="d-li-val" style="color:#2563EB">24.3%</span></div>
+<div class="d-li"><span class="d-li-name">Acme Corp</span><span class="d-li-val">31.2%</span></div>
+<div class="d-li"><span class="d-li-name">RivalCo</span><span class="d-li-val">18.7%</span></div>
+<div class="d-li"><span class="d-li-name">NexTech</span><span class="d-li-val">12.1%</span></div>
+</div>
+</div>
+<div class="d-query"><div class="d-query-dot"></div><span>Ask anything — "Why did Acme raise and how does it affect us?"</span></div>
+</div>
+
+<div class="d-panel" id="dp2">
+<div class="d-kpis">
+<div class="d-kpi"><div class="d-kpi-l">Revenue (TTM)</div><div class="d-kpi-v">$3.8M</div><div class="d-kpi-c">+42% YoY</div></div>
+<div class="d-kpi"><div class="d-kpi-l">Gross margin</div><div class="d-kpi-v">72%</div><div class="d-kpi-c">+4pts vs prior</div></div>
+<div class="d-kpi"><div class="d-kpi-l">CAC payback</div><div class="d-kpi-v">4.2mo</div><div class="d-kpi-c">Industry: 8.1mo</div></div>
+<div class="d-kpi"><div class="d-kpi-l">Burn rate</div><div class="d-kpi-v">$180K</div><div class="d-kpi-c">18mo runway</div></div>
+</div>
+<div class="d-chart">
+<div class="d-chart-t">Revenue vs industry benchmark</div>
+<svg viewBox="0 0 700 110" fill="none" preserveAspectRatio="xMidYMid meet">
+<line x1="0" y1="20" x2="700" y2="20" stroke="#F3F4F6" stroke-width="1"/>
+<line x1="0" y1="50" x2="700" y2="50" stroke="#F3F4F6" stroke-width="1"/>
+<line x1="0" y1="80" x2="700" y2="80" stroke="#F3F4F6" stroke-width="1"/>
+<path d="M40 95 Q110 88 180 76 T320 56 T460 36 T600 20 T680 10" stroke="#059669" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M40 95 Q110 88 180 76 T320 56 T460 36 T600 20 T680 10 V110 H40Z" fill="url(#cg2)"/>
+<path d="M40 96 Q110 92 180 86 T320 76 T460 66 T600 56 T680 48" stroke="#E5E7EB" stroke-width="1.5" fill="none" stroke-dasharray="4 4" stroke-linecap="round"/>
+<circle cx="680" cy="10" r="4" fill="#059669"/>
+<circle cx="680" cy="48" r="3" fill="#D1D5DB"/>
+<defs><linearGradient id="cg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#059669" stop-opacity=".1"/><stop offset="100%" stop-color="#059669" stop-opacity="0"/></linearGradient></defs>
+</svg>
+</div>
+<div class="d-grid">
+<div class="d-list"><div class="d-list-t">Key ratios vs peers</div>
+<div class="d-li"><span class="d-li-name">LTV/CAC ratio</span><span class="d-li-val" style="color:#059669">4.8x</span></div>
+<div class="d-li"><span class="d-li-name">Net revenue retention</span><span class="d-li-val" style="color:#059669">118%</span></div>
+<div class="d-li"><span class="d-li-name">Rule of 40 score</span><span class="d-li-val" style="color:#059669">62</span></div>
+</div>
+<div class="d-list"><div class="d-list-t">Cash flow forecast</div>
+<div class="d-li"><span class="d-li-name">Monthly burn</span><span class="d-li-val">$180K</span></div>
+<div class="d-li"><span class="d-li-name">Runway</span><span class="d-li-val" style="color:#059669">18 months</span></div>
+<div class="d-li"><span class="d-li-name">Break-even ETA</span><span class="d-li-val">Q3 2027</span></div>
+</div>
+</div>
+<div class="d-query"><div class="d-query-dot"></div><span>Ask anything — "When do we hit profitability at current growth?"</span></div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+<div class="ctn">
+<div class="stats-g stg fade">
+<div><div class="st-n">48h</div><div class="st-l">Average report delivery</div></div>
+<div><div class="st-n">5x</div><div class="st-l">Cheaper than Big 4 firms</div></div>
+<div><div class="st-n">10x</div><div class="st-l">Faster than traditional consulting</div></div>
+<div><div class="st-n">92%</div><div class="st-l">Client retention rate</div></div>
+</div>
+</div>
+</section>
+
+<!-- WHO IS THIS FOR -->
+<section class="seg fade" id="segments">
+<div class="ctn">
+<div class="sh">
+<span class="tag tag-a">Built for your stage</span>
+<h2>Intelligence that scales with you</h2>
+<p>Whether you're validating an idea or running a portfolio, we have the right level of intelligence.</p>
+</div>
+<div class="seg-tabs" id="segtabs">
+<button class="seg-tab act" onclick="showSeg(0)">Startups</button>
+<button class="seg-tab" onclick="showSeg(1)">Small business</button>
+<button class="seg-tab" onclick="showSeg(2)">Mid-market</button>
+<button class="seg-tab" onclick="showSeg(3)">Enterprise</button>
+</div>
+
+<div class="seg-panel act" id="sp0">
+<div class="seg-info">
+<h3>Validate faster, pitch smarter</h3>
+<p>Stop guessing if your market is big enough. Get AI-generated TAM/SAM/SOM analysis, competitive landscape maps, and investor-ready data — in 48 hours.</p>
+<ul class="seg-feat">
+<li>Market sizing with real data sources</li>
+<li>Competitive landscape overview</li>
+<li>AI-generated industry reports</li>
+<li>Investor pitch data packages</li>
+</ul>
+<div class="seg-price">From <strong>$299</strong>/mo</div>
+</div>
+<div class="seg-visual">
+<div class="seg-mock"><div class="seg-mock-t">Your TAM analysis</div><div class="seg-mock-bars"><div class="seg-mock-bar" style="height:20%"></div><div class="seg-mock-bar" style="height:35%"></div><div class="seg-mock-bar" style="height:50%"></div><div class="seg-mock-bar" style="height:65%"></div><div class="seg-mock-bar" style="height:75%"></div><div class="seg-mock-bar" style="height:85%"></div><div class="seg-mock-bar" style="height:100%"></div></div></div>
+<div class="seg-mock"><div class="seg-mock-t">Competitive positioning</div><div style="display:flex;gap:6px;flex-wrap:wrap"><span style="padding:4px 10px;border-radius:6px;background:var(--accent-l);color:var(--accent);font-size:11px;font-weight:600">You</span><span style="padding:4px 10px;border-radius:6px;background:var(--g100);color:var(--g500);font-size:11px;font-weight:500">Competitor A</span><span style="padding:4px 10px;border-radius:6px;background:var(--g100);color:var(--g500);font-size:11px;font-weight:500">Competitor B</span><span style="padding:4px 10px;border-radius:6px;background:var(--g100);color:var(--g500);font-size:11px;font-weight:500">Competitor C</span></div></div>
+</div>
+</div>
+
+<div class="seg-panel" id="sp1">
+<div class="seg-info">
+<h3>Know where to grow next</h3>
+<p>Your gut says expand. Our data tells you where, when, and how. Monthly intelligence packages with analyst support to make growth decisions with confidence.</p>
+<ul class="seg-feat">
+<li>Monthly strategy calls with an analyst</li>
+<li>2 custom reports per month</li>
+<li>Growth opportunity identification</li>
+<li>Competitive pricing intelligence</li>
+</ul>
+<div class="seg-price">From <strong>$2,500</strong>/mo</div>
+</div>
+<div class="seg-visual">
+<div class="seg-mock"><div class="seg-mock-t">Growth opportunities</div><div class="seg-mock-bars"><div class="seg-mock-bar" style="height:40%;background:#059669"></div><div class="seg-mock-bar" style="height:60%;background:#059669"></div><div class="seg-mock-bar" style="height:80%;background:#059669"></div><div class="seg-mock-bar" style="height:100%;background:#059669"></div><div class="seg-mock-bar" style="height:70%;background:#059669"></div><div class="seg-mock-bar" style="height:50%;background:#059669"></div><div class="seg-mock-bar" style="height:30%;background:#059669"></div></div></div>
+<div class="seg-mock"><div class="seg-mock-t">Revenue forecast</div><div style="font-family:var(--font-m);font-size:22px;font-weight:700;color:var(--black)">$1.8M <span style="font-size:12px;color:var(--green);font-weight:600">+34%</span></div></div>
+</div>
+</div>
+
+<div class="seg-panel" id="sp2">
+<div class="seg-info">
+<h3>Scale with strategic clarity</h3>
+<p>Dedicated strategist, unlimited reports, and quarterly workshops. We become your outsourced intelligence department at a fraction of the cost.</p>
+<ul class="seg-feat">
+<li>Dedicated senior strategist</li>
+<li>Unlimited intelligence reports</li>
+<li>Custom analytics dashboards</li>
+<li>Quarterly strategic workshops</li>
+</ul>
+<div class="seg-price">From <strong>$10K</strong>/mo</div>
+</div>
+<div class="seg-visual">
+<div class="seg-mock"><div class="seg-mock-t">Strategic dashboard</div><div class="seg-mock-bars"><div class="seg-mock-bar" style="height:60%;background:#7C3AED"></div><div class="seg-mock-bar" style="height:80%;background:#7C3AED"></div><div class="seg-mock-bar" style="height:70%;background:#7C3AED"></div><div class="seg-mock-bar" style="height:90%;background:#7C3AED"></div><div class="seg-mock-bar" style="height:100%;background:#7C3AED"></div><div class="seg-mock-bar" style="height:85%;background:#7C3AED"></div><div class="seg-mock-bar" style="height:95%;background:#7C3AED"></div></div></div>
+<div class="seg-mock"><div class="seg-mock-t">KPI tracking</div><div style="display:flex;gap:8px"><span style="font-family:var(--font-m);font-size:18px;font-weight:700;color:var(--black)">NPS 72</span><span style="font-family:var(--font-m);font-size:18px;font-weight:700;color:var(--green)">NRR 118%</span></div></div>
+</div>
+</div>
+
+<div class="seg-panel" id="sp3">
+<div class="seg-info">
+<h3>Embedded intelligence for the C-suite</h3>
+<p>Custom AI models, embedded advisory teams, board-level strategic support, and M&A intelligence. We become your competitive edge.</p>
+<ul class="seg-feat">
+<li>Embedded advisory team on-site</li>
+<li>Custom AI models for your data</li>
+<li>Board advisory and presentations</li>
+<li>M&A target screening and due diligence</li>
+<li>Dedicated account executive + strategy calls</li>
+</ul>
+<div class="seg-price"><strong>Custom</strong> pricing</div>
+</div>
+<div class="seg-visual">
+<div class="seg-mock"><div class="seg-mock-t">Board intelligence brief</div><div style="display:flex;flex-direction:column;gap:6px"><div style="height:8px;background:var(--g200);border-radius:4px;width:100%"></div><div style="height:8px;background:var(--g200);border-radius:4px;width:80%"></div><div style="height:8px;background:var(--g200);border-radius:4px;width:60%"></div></div></div>
+<div class="seg-mock"><div class="seg-mock-t">M&A pipeline</div><div style="display:flex;gap:6px;flex-wrap:wrap"><span style="padding:4px 10px;border-radius:6px;background:#FEF3C7;color:#D97706;font-size:11px;font-weight:600">3 targets</span><span style="padding:4px 10px;border-radius:6px;background:var(--green-l);color:var(--green);font-size:11px;font-weight:600">1 in due diligence</span></div></div>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- SERVICES BENTO -->
+<section class="svc" id="services">
+<div class="ctn">
+<div class="sh fade">
+<span class="tag tag-g">Full-spectrum intelligence</span>
+<h2>Six pillars of insight</h2>
+<p>Each pillar works alone or together. Combine them for compounding intelligence your competitors can't match.</p>
+</div>
+<div class="svc-grid stg fade">
+<div class="svc-card">
+<div class="svc-top"><div class="svc-ico si-bl"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 2"/></svg></div><h3>Market intelligence</h3></div>
+<p class="svc-benefit">Know exactly how big your opportunity is and where the market is heading next.</p>
+<div class="svc-viz"><svg viewBox="0 0 200 60" fill="none"><rect x="10" y="45" width="20" height="15" rx="2" fill="#0071E3" opacity=".2"/><rect x="40" y="35" width="20" height="25" rx="2" fill="#0071E3" opacity=".35"/><rect x="70" y="25" width="20" height="35" rx="2" fill="#0071E3" opacity=".5"/><rect x="100" y="18" width="20" height="42" rx="2" fill="#0071E3" opacity=".65"/><rect x="130" y="8" width="20" height="52" rx="2" fill="#0071E3" opacity=".8"/><rect x="160" y="2" width="20" height="58" rx="2" fill="#0071E3"/></svg></div>
+</div>
+<div class="svc-card">
+<div class="svc-top"><div class="svc-ico si-gr"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M7 12l2-3 2 2 3-4"/></svg></div><h3>Financial intelligence</h3></div>
+<p class="svc-benefit">Turn your numbers into a strategic weapon with AI-powered modeling and benchmarks.</p>
+<div class="svc-viz"><svg viewBox="0 0 200 60" fill="none"><path d="M10 55 Q40 50 70 35 T130 20 T190 8" stroke="#059669" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M10 55 Q40 50 70 35 T130 20 T190 8 V60 H10Z" fill="#059669" opacity=".08"/></svg></div>
+</div>
+<div class="svc-card">
+<div class="svc-top"><div class="svc-ico si-pu"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 2L2 7l9 5 9-5-9-5zM2 15l9 5 9-5M2 11l9 5 9-5"/></svg></div><h3>AI transformation</h3></div>
+<p class="svc-benefit">Find what's broken, automate what's slow, and build teams that improve every quarter.</p>
+<div class="svc-viz"><svg viewBox="0 0 200 60" fill="none"><rect x="10" y="10" width="40" height="18" rx="4" fill="#7C3AED" opacity=".15" stroke="#7C3AED" stroke-width=".5" opacity=".3"/><rect x="70" y="10" width="40" height="18" rx="4" fill="#7C3AED" opacity=".3" stroke="#7C3AED" stroke-width=".5"/><rect x="130" y="10" width="50" height="18" rx="4" fill="#7C3AED" opacity=".5" stroke="#7C3AED" stroke-width=".5"/><rect x="30" y="36" width="60" height="18" rx="4" fill="#7C3AED" opacity=".7" stroke="#7C3AED" stroke-width=".5"/><rect x="110" y="36" width="70" height="18" rx="4" fill="#7C3AED" opacity="1" stroke="#7C3AED" stroke-width=".5"/></svg></div>
+</div>
+<div class="svc-card">
+<div class="svc-top"><div class="svc-ico si-am"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L3 13h7l-1 5 9-11h-7l1-5z"/></svg></div><h3>Growth strategy</h3></div>
+<p class="svc-benefit">Stop guessing which market to enter. Get a data-backed roadmap with milestones.</p>
+<div class="svc-viz"><svg viewBox="0 0 200 60" fill="none"><circle cx="30" cy="30" r="8" fill="#D97706" opacity=".2"/><circle cx="70" cy="25" r="12" fill="#D97706" opacity=".35"/><circle cx="120" cy="20" r="16" fill="#D97706" opacity=".55"/><circle cx="170" cy="15" r="14" fill="#D97706" opacity=".8"/></svg></div>
+</div>
+<div class="svc-card">
+<div class="svc-top"><div class="svc-ico si-ro"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 20s7-3.5 7-9V5l-7-3-7 3v6c0 5.5 7 9 7 9z"/></svg></div><h3>Risk intelligence</h3></div>
+<p class="svc-benefit">See threats before they hit. Monitor regulations, competitors, and market shifts in real-time.</p>
+<div class="svc-viz"><svg viewBox="0 0 200 60" fill="none"><rect x="10" y="5" width="180" height="50" rx="6" fill="none" stroke="#E11D48" stroke-width=".5" opacity=".2"/><rect x="20" y="15" width="40" height="12" rx="3" fill="#E11D48" opacity=".15"/><rect x="70" y="15" width="60" height="12" rx="3" fill="#E11D48" opacity=".3"/><rect x="140" y="15" width="40" height="12" rx="3" fill="#E11D48" opacity=".5"/><rect x="20" y="35" width="50" height="12" rx="3" fill="#E11D48" opacity=".2"/><rect x="80" y="35" width="45" height="12" rx="3" fill="#FEF3C7"/><rect x="135" y="35" width="45" height="12" rx="3" fill="#E11D48" opacity=".1"/></svg></div>
+</div>
+<div class="svc-card">
+<div class="svc-top"><div class="svc-ico si-cy"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="16" height="12" rx="2"/><path d="M7 19h6M10 15v4"/></svg></div><h3>Intelligence platform</h3></div>
+<p class="svc-benefit">Ask questions in plain English. Get answers from your unified business intelligence dashboard.</p>
+<div class="svc-viz"><svg viewBox="0 0 200 60" fill="none"><rect x="10" y="5" width="180" height="50" rx="6" fill="none" stroke="#0891B2" stroke-width=".5" opacity=".3"/><rect x="20" y="15" width="70" height="8" rx="2" fill="#0891B2" opacity=".15"/><rect x="20" y="30" width="160" height="6" rx="2" fill="#0891B2" opacity=".1"/><rect x="20" y="42" width="120" height="6" rx="2" fill="#0891B2" opacity=".1"/></svg></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- COMPARISON -->
+<section class="cmp" id="compare">
+<div class="ctn">
+<div class="sh fade">
+<span class="tag tag-a">Why switch</span>
+<h2>Traditional consulting is broken</h2>
+<p>Same insights. Fraction of the cost and time. Here's how we compare.</p>
+</div>
+<div class="cmp-table fade">
+<div class="cmp-row head"><div class="cmp-cell head"></div><div class="cmp-cell head us">Signal Labs</div><div class="cmp-cell head">Big 4 / MBB</div></div>
+<div class="cmp-row"><div class="cmp-cell feat">Market report delivery</div><div class="cmp-cell us">48-72 hours</div><div class="cmp-cell">4-8 weeks</div></div>
+<div class="cmp-row"><div class="cmp-cell feat">Typical engagement cost</div><div class="cmp-cell us">$3K - $25K</div><div class="cmp-cell">$50K - $500K+</div></div>
+<div class="cmp-row"><div class="cmp-cell feat">AI-native analysis</div><div class="cmp-cell"><span class="cmp-check">&#10003;</span></div><div class="cmp-cell"><span class="cmp-x">Retrofitted</span></div></div>
+<div class="cmp-row"><div class="cmp-cell feat">Real-time monitoring</div><div class="cmp-cell"><span class="cmp-check">&#10003;</span></div><div class="cmp-cell"><span class="cmp-x">&#10005;</span></div></div>
+<div class="cmp-row"><div class="cmp-cell feat">Transparent methodology</div><div class="cmp-cell"><span class="cmp-check">&#10003;</span></div><div class="cmp-cell"><span class="cmp-x">Black box</span></div></div>
+<div class="cmp-row"><div class="cmp-cell feat">Self-serve platform access</div><div class="cmp-cell"><span class="cmp-check">&#10003;</span></div><div class="cmp-cell"><span class="cmp-x">&#10005;</span></div></div>
+<div class="cmp-row"><div class="cmp-cell feat">Senior-led execution</div><div class="cmp-cell"><span class="cmp-check">&#10003;</span></div><div class="cmp-cell"><span class="cmp-x">Junior heavy</span></div></div>
+</div>
+</div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+<div class="ctn">
+<div class="sh fade">
+<span class="tag tag-g">Simple process</span>
+<h2>From question to strategy in 3 steps</h2>
+<p>No 12-week scoping exercises. No SOWs longer than your business plan.</p>
+</div>
+<div class="how-steps stg fade">
+<div class="how-step"><div class="how-num">1</div><h3>Tell us what you need</h3><p>Sign up, pick your plan, and describe your business challenge. Our AI starts analyzing your market before we even talk.</p></div>
+<div class="how-step"><div class="how-num">2</div><h3>AI + experts go to work</h3><p>Our engine processes market data, financial filings, and competitive signals. Human strategists validate and sharpen every insight.</p></div>
+<div class="how-step"><div class="how-num">3</div><h3>Act on clear recommendations</h3><p>Get prioritized actions with the data behind each one. Plus ongoing monitoring so your intelligence never goes stale.</p></div>
+</div>
+</div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="test">
+<div class="ctn">
+<div class="sh fade">
+<h2>What our clients say</h2>
+</div>
+<div class="test-grid stg fade">
+<div class="test-card">
+<div class="test-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+<p class="test-quote">"We got our competitive landscape and TAM analysis in 3 days. Our last consulting firm took 6 weeks and charged 10x more for less depth."</p>
+<div class="test-author"><div class="test-avatar">MR</div><div><div class="test-name">Maria R.</div><div class="test-role">CEO, Series A SaaS</div></div></div>
+</div>
+<div class="test-card">
+<div class="test-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+<p class="test-quote">"The AI dashboard changed how we make decisions. We used to fly blind on competitor moves — now we get alerts before our board does."</p>
+<div class="test-author"><div class="test-avatar">JL</div><div><div class="test-name">James L.</div><div class="test-role">VP Strategy, Mid-Market Fintech</div></div></div>
+</div>
+<div class="test-card">
+<div class="test-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+<p class="test-quote">"Signal Labs's market entry report convinced our investors to fund our APAC expansion. The data was more thorough than anything we'd seen from Deloitte."</p>
+<div class="test-author"><div class="test-avatar">SK</div><div><div class="test-name">Sarah K.</div><div class="test-role">Founder, E-commerce Platform</div></div></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- SAMPLE REPORT -->
+<section class="report">
+<div class="ctn">
+<div class="sh fade">
+<span class="tag">See a sample</span>
+<h2>This is what you'll get</h2>
+<p>Every report includes real data, clear methodology, and actionable next steps.</p>
+</div>
+<div class="report-preview fade">
+<div class="rp-card"><div class="rp-card-t">Total addressable market</div><div class="rp-card-v">$14.2B</div><div class="rp-card-c">+26.4% CAGR through 2035</div></div>
+<div class="rp-card"><div class="rp-card-t">Your obtainable market</div><div class="rp-card-v">$420M</div><div class="rp-card-c">Based on segment + geo analysis</div></div>
+<div class="rp-chart">
+<div class="rp-chart-t">5-year market projection with scenario modeling</div>
+<svg viewBox="0 0 700 100" fill="none" preserveAspectRatio="xMidYMid meet">
+<path d="M0 90 Q100 80 200 65 T400 38 T600 12 T700 4" stroke="#34D399" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path d="M0 90 Q100 80 200 65 T400 38 T600 12 T700 4 V100 H0Z" fill="#34D399" fill-opacity=".1"/>
+<path d="M0 90 Q100 84 200 74 T400 58 T600 44 T700 38" stroke="rgba(255,255,255,.2)" stroke-width="1" fill="none" stroke-dasharray="4 4"/>
+<path d="M0 90 Q100 76 200 56 T400 28 T600 8 T700 2" stroke="rgba(255,255,255,.15)" stroke-width="1" fill="none" stroke-dasharray="4 4"/>
+<text x="8" y="12" fill="rgba(255,255,255,.35)" font-size="10" font-family="'Space Mono',monospace">Optimistic</text>
+<text x="8" y="55" fill="rgba(255,255,255,.25)" font-size="10" font-family="'Space Mono',monospace">Base case</text>
+<text x="8" y="80" fill="rgba(255,255,255,.2)" font-size="10" font-family="'Space Mono',monospace">Conservative</text>
+</svg>
+</div>
+<div class="rp-card"><div class="rp-card-t">Competitors analyzed</div><div class="rp-card-v">47</div><div class="rp-card-c">Across 4 strategic tiers</div></div>
+<div class="rp-card"><div class="rp-card-t">Strategic actions</div><div class="rp-card-v">12</div><div class="rp-card-c">Prioritized by impact + feasibility</div></div>
+</div>
+<div class="report-cta fade">
+<a href="#cta" class="bp">Get your free report <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+<p>Delivered to your inbox in 48 hours</p>
+</div>
+</div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+<div class="ctn">
+<div class="sh fade">
+<span class="tag tag-g">Transparent pricing</span>
+<h2>Plans for every stage</h2>
+<p>Start self-serve. Scale to white-glove advisory as you grow.</p>
+</div>
+<div class="pricing-g stg fade">
+
+<div class="pc">
+<h3>Starter</h3>
+<div class="pc-desc">Solopreneurs & early startups</div>
+<div class="pc-price">$299<span>/mo</span></div>
+<div class="pc-equiv">Traditional equivalent: <s>$5,000/project</s></div>
+<ul class="pc-feats">
+<li>AI dashboard access</li>
+<li>Monthly market intelligence reports</li>
+<li>Competitive alerts & monitoring</li>
+<li>Self-serve analytics tools</li>
+</ul>
+<a href="#cta" class="pc-btn">Start free trial</a>
+</div>
+
+<div class="pc">
+<h3>Growth</h3>
+<div class="pc-desc">Small businesses scaling up</div>
+<div class="pc-price">$2,500<span>/mo</span></div>
+<div class="pc-equiv">Traditional equivalent: <s>$15,000/mo</s></div>
+<ul class="pc-feats">
+<li>Everything in Starter</li>
+<li>Monthly strategy call</li>
+<li>2 custom reports per month</li>
+<li>Dedicated analyst support</li>
+</ul>
+<a href="#cta" class="pc-btn">Start free trial</a>
+</div>
+
+<div class="pc feat">
+<div class="pc-badge">Most popular</div>
+<h3>Professional</h3>
+<div class="pc-desc">Mid-market companies</div>
+<div class="pc-price">$10K<span>/mo</span></div>
+<div class="pc-equiv">Traditional equivalent: <s>$50,000/mo</s></div>
+<ul class="pc-feats">
+<li>Everything in Growth</li>
+<li>Dedicated senior strategist</li>
+<li>Unlimited intelligence reports</li>
+<li>Quarterly strategic workshops</li>
+<li>Custom analytics dashboards</li>
+</ul>
+<a href="#cta" class="pc-btn">Start free trial</a>
+</div>
+
+<div class="pc">
+<h3>Enterprise</h3>
+<div class="pc-desc">Large corporations & PE</div>
+<div class="pc-price">Custom</div>
+<div class="pc-equiv">Replaces $500K+ annual consulting</div>
+<ul class="pc-feats">
+<li>Everything in Professional</li>
+<li>Embedded advisory team</li>
+<li>Custom AI models</li>
+<li>Board advisory access</li>
+<li>M&A intelligence support</li>
+</ul>
+<a href="mailto:enterprise@Signal Labs.com" class="pc-btn">Contact sales</a>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+<div class="ctn">
+<div class="sh fade"><h2>Frequently asked questions</h2></div>
+<div class="faq-list fade">
+<div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">How is this different from McKinsey or Deloitte?<span class="faq-ic"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 1v10M1 6h10"/></svg></span></button><div class="faq-a"><div class="faq-a-in">Same caliber of strategic intelligence, 5x lower cost, 10x faster. Every engagement starts with AI-scale data analysis, then senior strategists add human judgment. No armies of junior analysts billing hours.</div></div></div>
+<div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What industries do you cover?<span class="faq-ic"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 1v10M1 6h10"/></svg></span></button><div class="faq-a"><div class="faq-a-in">All industries. Our cross-industry knowledge graph means patterns from retail inform healthcare, fintech insights unlock manufacturing opportunities. Priority verticals: healthcare, fintech, e-commerce, SaaS, and professional services.</div></div></div>
+<div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Is it really AI or is that just marketing?<span class="faq-ic"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 1v10M1 6h10"/></svg></span></button><div class="faq-a"><div class="faq-a-in">Both AI and human expertise. Our AI handles data collection, pattern recognition, and initial analysis at machine scale. Senior strategists validate, interpret, and contextualize every insight. Every recommendation comes with the data and methodology behind it — no black boxes.</div></div></div>
+<div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What does the free report include?<span class="faq-ic"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 1v10M1 6h10"/></svg></span></button><div class="faq-a"><div class="faq-a-in">A market landscape overview for your industry including market sizing, key competitors, growth trends, and 3-5 strategic opportunities. It's a real deliverable — not a sales pitch. Most clients are surprised by how much insight we pack into it.</div></div></div>
+<div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Can I start small and scale up?<span class="faq-ic"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 1v10M1 6h10"/></svg></span></button><div class="faq-a"><div class="faq-a-in">Absolutely. Most clients start with Starter or Growth, experience the quality, and expand over time. Our modular architecture means you only pay for what you need — add pillars as your business grows.</div></div></div>
+<div class="faq-item"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">How secure is my data?<span class="faq-ic"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 1v10M1 6h10"/></svg></span></button><div class="faq-a"><div class="faq-a-in">SOC 2 Type II compliant with end-to-end encryption and role-based access control. Your data is never shared between clients or used to train AI models. We take security as seriously as the intelligence itself.</div></div></div>
+</div>
+</div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="fcta" id="cta">
+<div class="ctn">
+<div class="fcta-box fade">
+<h2>Get your free market report</h2>
+<p>Enter your email and tell us your industry. We'll deliver a custom intelligence report to your inbox in 48 hours — on us.</p>
+<div class="fcta-form">
+<button class="bp" type="button" onclick="openReportModal()">Get my free report</button>
+</div>
+<p class="fcta-sub">No credit card required. No sales call. Just intelligence.</p>
+</div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+<div class="ctn">
+<div class="ft">
+<div class="ft-c">&copy; 2026 Signal Labs. All rights reserved.</div>
+<ul class="ft-l">
+<li><a href="#">Privacy</a></li>
+<li><a href="#">Terms</a></li>
+<li><a href="mailto:hello@Signal Labs.com">Contact</a></li>
+</ul>
+</div>
+</div>
+</footer>
+
+<!-- STICKY MOBILE CTA -->
+<div class="sticky-cta"><a href="#" onclick="openReportModal();return false;">Get your free market report</a></div>
+
+<script>
+var nav=document.getElementById('nav');
+window.addEventListener('scroll',function(){nav.classList.toggle('sc',window.scrollY>20)});
+var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('v');obs.unobserve(e.target)}})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.fade').forEach(function(el){obs.observe(el)});
+
+function showDash(i){
+document.querySelectorAll('.d-tab').forEach(function(t,j){t.classList.toggle('act',j===i)});
+document.querySelectorAll('.d-panel').forEach(function(p,j){p.classList.toggle('act',j===i)});
+document.querySelectorAll('.d-side-item').forEach(function(s,j){if(j<3)s.classList.toggle('act',j===i)});
+}
+
+function showSeg(i){
+document.querySelectorAll('.seg-tab').forEach(function(t,j){t.classList.toggle('act',j===i)});
+document.querySelectorAll('.seg-panel').forEach(function(p,j){p.classList.toggle('act',j===i)});
+}
+</script
+<!-- MULTI-STEP REPORT MODAL -->
+<div id="reportModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px">
+<div style="background:#fff;border-radius:20px;max-width:560px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.18)">
+
+  <div style="padding:24px 28px 0;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Free Market Snapshot</div>
+      <div style="font-size:17px;font-weight:700;color:#0A0A0A;letter-spacing:-.4px">Tell us about your business</div>
+    </div>
+    <button onclick="closeReportModal()" style="background:none;border:none;cursor:pointer;padding:6px;color:#9CA3AF;font-size:20px;line-height:1">&times;</button>
+  </div>
+
+  <div style="padding:12px 28px 0">
+    <div style="display:flex;gap:5px">
+      <div id="pb1" style="flex:1;height:3px;border-radius:2px;background:#0071E3;transition:background .3s"></div>
+      <div id="pb2" style="flex:1;height:3px;border-radius:2px;background:#E5E7EB;transition:background .3s"></div>
+      <div id="pb3" style="flex:1;height:3px;border-radius:2px;background:#E5E7EB;transition:background .3s"></div>
+      <div id="pb4" style="flex:1;height:3px;border-radius:2px;background:#E5E7EB;transition:background .3s"></div>
+      <div id="pb5" style="flex:1;height:3px;border-radius:2px;background:#E5E7EB;transition:background .3s"></div>
+    </div>
+    <div id="stepLabel" style="font-size:11px;color:#9CA3AF;margin-top:5px">Step 1 of 5</div>
+  </div>
+
+  <!-- STEP 1: Industry + Country -->
+  <div id="step1" class="modal-step" style="padding:20px 28px 28px">
+    <div class="step-title">What is your industry and location?</div>
+
+    <div class="field-group">
+      <label class="field-label">INDUSTRY</label>
+      <select id="f_industry" class="sl-select">
+        <option value="">Select your industry...</option>
+        <optgroup label="Technology">
+          <option value="SaaS">SaaS / Software</option>
+          <option value="Mobile Apps">Mobile Apps</option>
+          <option value="Cybersecurity">Cybersecurity</option>
+          <option value="AI / Machine Learning">AI / Machine Learning</option>
+          <option value="Cloud Services">Cloud Services</option>
+          <option value="IT Services">IT Services / Consulting</option>
+          <option value="Hardware / Electronics">Hardware / Electronics</option>
+        </optgroup>
+        <optgroup label="Commerce">
+          <option value="eCommerce">eCommerce / Online Retail</option>
+          <option value="Retail">Retail / Physical Stores</option>
+          <option value="Wholesale / Distribution">Wholesale / Distribution</option>
+          <option value="Marketplace">Marketplace Platform</option>
+        </optgroup>
+        <optgroup label="Finance">
+          <option value="Fintech">Fintech</option>
+          <option value="Banking">Banking / Credit Unions</option>
+          <option value="Insurance">Insurance</option>
+          <option value="Investment / Wealth">Investment / Wealth Management</option>
+          <option value="Accounting / Bookkeeping">Accounting / Bookkeeping</option>
+        </optgroup>
+        <optgroup label="Health">
+          <option value="Healthcare">Healthcare / Medical</option>
+          <option value="Mental Health">Mental Health / Therapy</option>
+          <option value="Fitness / Wellness">Fitness / Wellness</option>
+          <option value="Health Tech">Health Tech</option>
+          <option value="Pharma / Biotech">Pharma / Biotech</option>
+        </optgroup>
+        <optgroup label="Services">
+          <option value="Agency / Marketing">Marketing / Advertising Agency</option>
+          <option value="Legal">Legal Services</option>
+          <option value="HR / Recruiting">HR / Recruiting</option>
+          <option value="Consulting">Consulting / Strategy</option>
+          <option value="Accounting / Bookkeeping">Accounting / Bookkeeping</option>
+          <option value="Professional Services">Professional Services</option>
+        </optgroup>
+        <optgroup label="Real Estate">
+          <option value="Real Estate">Real Estate / Property</option>
+          <option value="Property Management">Property Management</option>
+          <option value="Construction">Construction / Contractors</option>
+          <option value="Architecture / Design">Architecture / Interior Design</option>
+        </optgroup>
+        <optgroup label="Media and Content">
+          <option value="Media / Publishing">Media / Publishing</option>
+          <option value="Creator / Influencer">Creator / Influencer</option>
+          <option value="Podcasting">Podcasting</option>
+          <option value="Video Production">Video Production</option>
+          <option value="Music / Entertainment">Music / Entertainment</option>
+        </optgroup>
+        <optgroup label="Education">
+          <option value="Education">Education / Schools</option>
+          <option value="EdTech">EdTech / Online Learning</option>
+          <option value="Coaching / Training">Coaching / Training</option>
+        </optgroup>
+        <optgroup label="Food and Hospitality">
+          <option value="Restaurant / Food">Restaurant / Food Service</option>
+          <option value="Food and Beverage">Food and Beverage Products</option>
+          <option value="Hospitality / Hotels">Hospitality / Hotels</option>
+          <option value="Events">Events / Catering</option>
+        </optgroup>
+        <optgroup label="Other">
+          <option value="Manufacturing">Manufacturing</option>
+          <option value="Logistics / Supply Chain">Logistics / Supply Chain</option>
+          <option value="Non-Profit">Non-Profit / NGO</option>
+          <option value="Government">Government / Public Sector</option>
+          <option value="other-industry">Other (specify below)</option>
+        </optgroup>
+      </select>
+      <div id="otherIndustryWrap" style="display:none;margin-top:8px">
+        <input id="f_industry_other" type="text" placeholder="Describe your industry..." class="sl-input">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">WHERE DO YOU OPERATE?</label>
+      <div id="countryOptions" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button onclick="selectOption('country','United States','countryOptions')" data-val="United States" class="opt-btn" style="text-align:center">United States</button>
+        <button onclick="selectOption('country','Mexico','countryOptions')" data-val="Mexico" class="opt-btn" style="text-align:center">Mexico</button>
+        <button onclick="selectOption('country','Colombia','countryOptions')" data-val="Colombia" class="opt-btn" style="text-align:center">Colombia</button>
+        <button onclick="selectOption('country','Argentina','countryOptions')" data-val="Argentina" class="opt-btn" style="text-align:center">Argentina</button>
+        <button onclick="selectOption('country','Spain','countryOptions')" data-val="Spain" class="opt-btn" style="text-align:center">Spain</button>
+        <button onclick="selectOption('country','Other LATAM','countryOptions')" data-val="Other LATAM" class="opt-btn" style="text-align:center">Other Latin America</button>
+        <button onclick="selectOption('country','Europe','countryOptions')" data-val="Europe" class="opt-btn" style="text-align:center">Europe</button>
+        <button onclick="selectOther('country','countryOptions')" data-val="__other__" class="opt-btn" style="text-align:center">Other</button>
+      </div>
+      <div id="otherCountryWrap" style="display:none;margin-top:8px">
+        <input id="f_country_other" type="text" placeholder="Type your country..." class="sl-input">
+      </div>
+    </div>
+
+    <div class="btn-row" style="margin-top:20px">
+      <button onclick="nextStep(2)" class="sl-btn-primary" style="width:100%">Continue</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Stage + Team -->
+  <div id="step2" class="modal-step" style="display:none;padding:20px 28px 28px">
+    <div class="step-title">Where is your business right now?</div>
+
+    <div class="field-group">
+      <label class="field-label">BUSINESS STAGE</label>
+      <div id="stageOptions" style="display:flex;flex-direction:column;gap:8px">
+        <button onclick="selectOption('stage','idea','stageOptions')" data-val="idea" class="opt-btn">Idea / Pre-revenue &mdash; still validating</button>
+        <button onclick="selectOption('stage','startup','stageOptions')" data-val="startup" class="opt-btn">Startup &mdash; under $10K/mo revenue</button>
+        <button onclick="selectOption('stage','growth','stageOptions')" data-val="growth" class="opt-btn">Growth &mdash; $10K to $100K/mo revenue</button>
+        <button onclick="selectOption('stage','established','stageOptions')" data-val="established" class="opt-btn">Established &mdash; $100K+/mo revenue</button>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">TEAM SIZE</label>
+      <div id="teamOptions" style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="selectOption('team','solo','teamOptions')" data-val="solo" class="opt-chip">Just me</button>
+        <button onclick="selectOption('team','2-5','teamOptions')" data-val="2-5" class="opt-chip">2 to 5</button>
+        <button onclick="selectOption('team','6-20','teamOptions')" data-val="6-20" class="opt-chip">6 to 20</button>
+        <button onclick="selectOption('team','21-100','teamOptions')" data-val="21-100" class="opt-chip">21 to 100</button>
+        <button onclick="selectOption('team','100+','teamOptions')" data-val="100+" class="opt-chip">100+</button>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button onclick="goBack(1)" class="sl-btn-back">Back</button>
+      <button onclick="nextStep(3)" class="sl-btn-primary">Continue</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Pain points -->
+  <div id="step3" class="modal-step" style="display:none;padding:20px 28px 28px">
+    <div class="step-title">What is your biggest challenge right now?</div>
+    <div style="font-size:12px;color:#9CA3AF;margin-bottom:14px">Select up to 2</div>
+    <div id="painOptions" style="display:flex;flex-direction:column;gap:7px">
+      <button onclick="togglePain(this,'market-growth')" class="pain-btn">I do not know if my market is growing or dying</button>
+      <button onclick="togglePain(this,'competitors')" class="pain-btn">I do not know what my competitors are doing</button>
+      <button onclick="togglePain(this,'margins')" class="pain-btn">I do not know if my pricing or margins are competitive</button>
+      <button onclick="togglePain(this,'growth')" class="pain-btn">I have a good product but do not know how to grow</button>
+      <button onclick="togglePain(this,'risk')" class="pain-btn">Market changes or regulations catch me by surprise</button>
+      <button onclick="togglePain(this,'leads')" class="pain-btn">I do not know who to sell to or how to find customers</button>
+      <button onclick="togglePain(this,'churn')" class="pain-btn">I am losing customers and do not understand why</button>
+      <button onclick="togglePain(this,'expansion')" class="pain-btn">I want to expand to a new market but not sure if it is worth it</button>
+      <button onclick="togglePain(this,'investors')" class="pain-btn">I need to convince investors with real data</button>
+      <button onclick="togglePain(this,'decisions')" class="pain-btn">My team makes decisions without solid data</button>
+    </div>
+    <div class="btn-row">
+      <button onclick="goBack(2)" class="sl-btn-back">Back</button>
+      <button onclick="nextStep(4)" class="sl-btn-primary">Continue</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: Decision + Competitors -->
+  <div id="step4" class="modal-step" style="display:none;padding:20px 28px 28px">
+    <div class="step-title">Help us make your report sharper</div>
+
+    <div class="field-group">
+      <label class="field-label">BIGGEST GOAL IN THE NEXT 90 DAYS <span style="color:#D1D5DB;font-weight:400;text-transform:none">(optional)</span></label>
+      <select id="f_decision" class="sl-select">
+        <option value="">Select a goal...</option>
+        <option value="Reach my first $10K/mo in revenue">Reach my first $10K/mo in revenue</option>
+        <option value="Hit $100K/mo or my first $1M year">Hit $100K/mo or my first $1M year</option>
+        <option value="Launch a new product or service">Launch a new product or service</option>
+        <option value="Expand to a new city or country">Expand to a new city or country</option>
+        <option value="Raise a funding round (Angel, Seed, Series A)">Raise a funding round (Angel, Seed, Series A)</option>
+        <option value="Reduce churn and improve retention">Reduce churn and improve retention</option>
+        <option value="Build or grow my sales team">Build or grow my sales team</option>
+        <option value="Automate operations to reduce costs">Automate operations to reduce costs</option>
+        <option value="Win market share from a specific competitor">Win market share from a specific competitor</option>
+        <option value="Validate a new business idea before investing">Validate a new business idea before investing</option>
+        <option value="Acquire or merge with another company">Acquire or merge with another company</option>
+        <option value="Exit or sell the business">Exit or sell the business</option>
+        <option value="other-goal">Other (type below)</option>
+      </select>
+      <div id="otherGoalWrap" style="display:none;margin-top:8px">
+        <input id="f_decision_other" type="text" placeholder="Describe your goal..." class="sl-input">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">COMPETITORS TO ANALYZE <span style="color:#D1D5DB;font-weight:400;text-transform:none">(optional)</span></label>
+      <input id="f_competitors" type="text" placeholder="e.g. HubSpot, Salesforce, Pipedrive" class="sl-input">
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">YOUR MAIN COMPETITIVE ADVANTAGE</label>
+      <div id="advantageOptions" style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="selectOption('advantage','price','advantageOptions')" data-val="price" class="opt-chip">Lower price</button>
+        <button onclick="selectOption('advantage','ease','advantageOptions')" data-val="ease" class="opt-chip">Easier to use</button>
+        <button onclick="selectOption('advantage','niche','advantageOptions')" data-val="niche" class="opt-chip">Specific niche</button>
+        <button onclick="selectOption('advantage','service','advantageOptions')" data-val="service" class="opt-chip">Better service</button>
+        <button onclick="selectOption('advantage','speed','advantageOptions')" data-val="speed" class="opt-chip">Faster delivery</button>
+        <button onclick="selectOption('advantage','unknown','advantageOptions')" data-val="unknown" class="opt-chip">Not sure yet</button>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button onclick="goBack(3)" class="sl-btn-back">Back</button>
+      <button onclick="nextStep(5)" class="sl-btn-primary">Continue</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: Email -->
+  <div id="step5" class="modal-step" style="display:none;padding:20px 28px 28px">
+    <div class="step-title">Where should we send your report?</div>
+    <div style="font-size:13px;color:#6B7280;margin-bottom:18px;line-height:1.6">Your personalized Market Snapshot will be in your inbox within 5 minutes. Free, no credit card needed.</div>
+
+    <div class="field-group">
+      <label class="field-label">WORK EMAIL</label>
+      <input id="f_email" type="email" placeholder="you@company.com" class="sl-input">
+    </div>
+    <div class="field-group">
+      <label class="field-label">COMPANY NAME <span style="color:#D1D5DB;font-weight:400;text-transform:none">(optional)</span></label>
+      <input id="f_company" type="text" placeholder="Your company" class="sl-input">
+    </div>
+
+    <div class="btn-row">
+      <button onclick="goBack(4)" class="sl-btn-back">Back</button>
+      <button id="submitReportBtn" onclick="submitReport()" class="sl-btn-primary" style="background:#0071E3">Generate my report</button>
+    </div>
+    <div id="submitMsg" style="display:none;text-align:center;padding:18px;color:#059669;font-weight:600;font-size:14px;border-radius:10px;background:#F0FDF9;margin-top:12px"></div>
+    <div style="font-size:11px;color:#9CA3AF;margin-top:10px;text-align:center">No spam. No credit card. Just intelligence.</div>
+  </div>
+
+</div>
+</div>
+
+<style>
+.step-title{font-size:15px;font-weight:600;color:#0A0A0A;margin-bottom:18px}
+.field-group{margin-bottom:16px}
+.field-label{font-size:11px;font-weight:700;color:#6B7280;display:block;margin-bottom:8px;letter-spacing:.5px;text-transform:uppercase}
+.sl-select{width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid #E5E7EB;font-size:14px;font-family:inherit;outline:none;background:#fff;color:#111827}
+.sl-select:focus{border-color:#0071E3}
+.sl-input{width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid #E5E7EB;font-size:14px;font-family:inherit;outline:none;background:#fff;color:#111827}
+.sl-input:focus{border-color:#0071E3;box-shadow:0 0 0 3px rgba(0,113,227,.08)}
+.btn-row{display:flex;gap:10px;margin-top:20px;align-items:center}
+.sl-btn-primary{flex:1;padding:12px 20px;border-radius:10px;background:#0A0A0A;color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:background .2s;white-space:nowrap}
+.sl-btn-primary:hover{background:#1F2937}
+.sl-btn-back{padding:12px 18px;border-radius:10px;background:#fff;color:#374151;font-size:14px;font-weight:600;border:1.5px solid #E5E7EB;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.sl-btn-back:hover{border-color:#9CA3AF;background:#F9FAFB}
+.opt-btn{padding:11px 14px;border-radius:10px;border:1.5px solid #E5E7EB;background:#fff;font-size:13px;font-family:inherit;text-align:left;cursor:pointer;color:#374151;width:100%;transition:border-color .15s,background .15s,color .15s;box-sizing:border-box}
+.opt-btn:hover{border-color:#0071E3;background:#EFF6FF;color:#0071E3}
+.opt-btn.sel{border-color:#0071E3;background:#EFF6FF;color:#0071E3;font-weight:600}
+.opt-chip{padding:9px 16px;border-radius:100px;border:1.5px solid #E5E7EB;background:#fff;font-size:13px;font-family:inherit;cursor:pointer;color:#374151;transition:border-color .15s,background .15s,color .15s;box-sizing:border-box;white-space:nowrap}
+.opt-chip:hover{border-color:#0071E3;background:#EFF6FF;color:#0071E3}
+.opt-chip.sel{border-color:#0071E3;background:#EFF6FF;color:#0071E3;font-weight:600}
+.pain-btn{padding:11px 14px;border-radius:10px;border:1.5px solid #E5E7EB;background:#fff;font-size:13px;font-family:inherit;text-align:left;cursor:pointer;color:#374151;width:100%;transition:border-color .15s,background .15s,color .15s;box-sizing:border-box}
+.pain-btn:hover{border-color:#059669;background:#F0FDF9;color:#059669}
+.pain-btn.sel{border-color:#059669;background:#F0FDF9;color:#059669;font-weight:600}
+#reportModal.open{display:flex!important}
+</style>
+
+<script>
+var formData={};
+var selectedPains=[];
+
+function openReportModal(){document.getElementById('reportModal').style.display='flex';document.body.style.overflow='hidden';}
+function closeReportModal(){document.getElementById('reportModal').style.display='none';document.body.style.overflow='';}
+document.getElementById('reportModal').addEventListener('click',function(e){if(e.target===this)closeReportModal();});
+
+function updateProgress(step){
+  for(var i=1;i<=5;i++) document.getElementById('pb'+i).style.background=i<=step?'#0071E3':'#E5E7EB';
+  document.getElementById('stepLabel').textContent='Step '+step+' of 5';
+}
+
+function goBack(step){
+  for(var s=1;s<=5;s++) document.getElementById('step'+s).style.display='none';
+  document.getElementById('step'+step).style.display='block';
+  updateProgress(step);
+}
+
+function nextStep(step){
+  if(step===2){
+    var ind=document.getElementById('f_industry').value;
+    if(!ind){alert('Please select your industry.');return;}
+    if(ind==='other-industry'){
+      var oth=document.getElementById('f_industry_other').value.trim();
+      if(!oth){alert('Please describe your industry.');return;}
+      formData.industry=oth;
+    } else {formData.industry=ind;}
+    if(!formData.country){alert('Please select your location.');return;}
+  }
+  if(step===3){if(!formData.stage){alert('Please select your business stage.');return;}}
+  if(step===4){
+    if(selectedPains.length===0){alert('Please select at least one challenge.');return;}
+    formData.pains=selectedPains.slice();
+  }
+  if(step===5){
+    var dec=document.getElementById('f_decision').value;
+    if(dec==='other-goal'){dec=document.getElementById('f_decision_other').value||'';}
+    formData.decision=dec;
+    formData.competitorsList=document.getElementById('f_competitors').value;
+    formData.advantage=formData.advantage||'';
+  }
+  for(var s=1;s<=5;s++) document.getElementById('step'+s).style.display='none';
+  document.getElementById('step'+step).style.display='block';
+  updateProgress(step);
+}
+
+function selectOption(key,val,groupId){
+  formData[key]=val;
+  document.getElementById(groupId).querySelectorAll('button').forEach(function(b){b.classList.remove('sel');});
+  event.currentTarget.classList.add('sel');
+}
+
+function selectOther(key,groupId){
+  document.getElementById(groupId).querySelectorAll('button').forEach(function(b){b.classList.remove('sel');});
+  event.currentTarget.classList.add('sel');
+  var wrap=document.getElementById('otherCountryWrap');
+  wrap.style.display='block';
+  document.getElementById('f_country_other').focus();
+  document.getElementById('f_country_other').oninput=function(){formData[key]=this.value;};
+}
+
+document.getElementById('f_industry').addEventListener('change',function(){
+  var wrap=document.getElementById('otherIndustryWrap');
+  wrap.style.display=this.value==='other-industry'?'block':'none';
+});
+
+document.getElementById('f_decision').addEventListener('change',function(){
+  var wrap=document.getElementById('otherGoalWrap');
+  wrap.style.display=this.value==='other-goal'?'block':'none';
+});
+
+function togglePain(btn,val){
+  var idx=selectedPains.indexOf(val);
+  if(idx>-1){selectedPains.splice(idx,1);btn.classList.remove('sel');}
+  else{if(selectedPains.length>=2){alert('Select up to 2 challenges.');return;}selectedPains.push(val);btn.classList.add('sel');}
+}
+
+async function submitReport(){
+  var email=document.getElementById('f_email').value;
+  if(!email||!email.includes('@')){alert('Please enter a valid email.');return;}
+  formData.email=email;
+  formData.company=document.getElementById('f_company').value||'';
+  var btn=document.getElementById('submitReportBtn');
+  btn.textContent='Generating your report...';btn.disabled=true;
+  try{
+    var res=await fetch('/api/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(formData)});
+    var data=await res.json();
+    if(data.success){
+      btn.style.display='none';
+      var msg=document.getElementById('submitMsg');
+      msg.style.display='block';
+      msg.innerHTML='Report on the way! Check your inbox in about 5 minutes.<br><span style="font-size:12px;color:#6B7280;font-weight:400">Check spam if you do not see it.</span>';
+    } else {btn.textContent='Generate my report';btn.disabled=false;alert(data.error||'Something went wrong.');}
+  } catch(e){btn.textContent='Generate my report';btn.disabled=false;alert('Connection error. Please try again.');}
+}
+</script>
+</body>
+</html>
