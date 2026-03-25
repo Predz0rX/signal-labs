@@ -9,6 +9,7 @@ const { fetchBLS } = require('./lib/fetchBLS');
 const { fetchTrends } = require('./lib/fetchTrends');
 const { generateReport } = require('./lib/generateReport');
 const axios = require('axios');
+const { spawn } = require('child_process');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
@@ -117,70 +118,20 @@ app.post('/api/report', async (req, res) => {
   // Respond immediately — process in background to avoid Render's 30s timeout
   res.json({ success: true, message: 'Report on the way! Check your inbox in about 5 minutes.' });
 
-  // Process async (fire and forget)
-  setImmediate(async () => {
   try {
-    // 1. Fetch data in parallel
-    const [newsData, blsData, trendsData] = await Promise.all([
-      fetchNews(industry), fetchBLS(industry), fetchTrends(industry)
-    ]);
-
-    userContext._trendsScore = trendsData.interestScore || 50;
-    userContext._blsYoY = blsData.yearOverYearChange || 'N/A';
-    userContext._newsCount = newsData.length;
-
-    // 2. Generate report with AI
-    const reportData = await generateReport({ industry, company, country, userContext, newsData, blsData, trendsData });
-
-    // 3. Generate unique token
-    const token = crypto.randomBytes(16).toString('hex');
-    const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
-    // 4. Save report JSON
-    const reportPayload = {
-      report: reportData,
-      meta: {
-        token, email, industry, company: company || '',
-        country: country || 'United States', date,
-        stage: stage || '', teamSize: team || '',
-        pains: pains || [], bigDecision: decision || '',
-        blsYoY: blsData.yearOverYearChange || 'N/A',
-        trendsScore: trendsData.interestScore || 50,
-        newsCount: newsData.length,
-        createdAt: new Date().toISOString(),
-        viewed: false, viewedAt: null
-      }
-    };
-    await saveReportPersistent(token, reportPayload);
-
-    // 5. Build report URL
-    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
-    const reportUrl = `${baseUrl}/report/${token}`;
-
-    // 6. Send email with magic link (no PDF attachment)
-    await sendEmailMagicLink({ to: email, industry, company, reportUrl });
-
-    // 7. Save lead
-    const leads = JSON.parse(fs.readFileSync(leadsFile, 'utf-8'));
-    const sequence = determineSequence(userContext);
-    leads.push({
-      id: `lead_${Date.now()}`, email, company: company || '',
-      timestamp: new Date().toISOString(), industry,
-      country: country || '', stage: stage || '', teamSize: team || '',
-      pains: pains || [], bigDecision: decision || '',
-      namedCompetitors: competitorsList || '', competitiveAdvantage: advantage || '',
-      reportToken: token, reportUrl,
-      followUpSequence: sequence, status: 'report_sent',
-      tags: buildTags(userContext)
+    const child = spawn(process.execPath, [path.join(__dirname, 'process-report.js'), JSON.stringify({
+      email, industry, company, country, stage, team, pains, decision, competitorsList, advantage
+    })], {
+      detached: true,
+      stdio: 'ignore',
+      windowsHide: true,
+      env: process.env
     });
-    fs.writeFileSync(leadsFile, JSON.stringify(leads, null, 2));
-
-    console.log(`[server] Report saved: ${token} | Email sent to ${email}`);
-
+    child.unref();
+    console.log(`[server] Spawned worker for ${email}`);
   } catch (err) {
-    console.error('[server] Background report error:', err.message);
+    console.error('[server] Worker spawn error:', err.message);
   }
-  }); // end setImmediate
 });
 
 // ── EMAIL WITH MAGIC LINK ──
