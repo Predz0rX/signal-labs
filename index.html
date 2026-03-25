@@ -1220,7 +1220,7 @@ async function submitReport(){
   var btn=document.getElementById('submitReportBtn');
   btn.textContent='Generating your report...';btn.disabled=true;
   try{
-    var res=await fetch('/api/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(formData)});
+    var res=await fetch('https://signal-labs-wddk.onrender.com/api/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(formData)});
     var data=await res.json();
     if(data.success){
       btn.style.display='none';
