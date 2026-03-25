@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signal Labs — Sign in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/public/app.css" />
+</head>
+<body class="app-shell auth-shell">
+  <main class="auth-card">
+    <div class="brand">signal<span>labs</span></div>
+    <p class="eyebrow">Private dashboard access</p>
+    <h1>Sign in with a magic link</h1>
+    <p class="muted">Use the same email where you receive your Signal Labs reports. We’ll email you a secure sign-in link.</p>
+
+    <form id="authForm" class="stack-lg">
+      <label class="field-label" for="email">Work email</label>
+      <input id="email" type="email" class="input" placeholder="you@company.com" required />
+      <button id="submitBtn" class="button button-primary" type="submit">Send magic link</button>
+    </form>
+
+    <div id="message" class="notice hidden"></div>
+
+    <div class="auth-links">
+      <a href="/">Back to landing</a>
+      <a href="/app">Open dashboard</a>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/public/app-config.js"></script>
+  <script>
+    const { createClient } = supabase;
+    const client = createClient(window.SIGNAL_LABS_CONFIG.supabaseUrl, window.SIGNAL_LABS_CONFIG.supabaseAnonKey);
+
+    const form = document.getElementById('authForm');
+    const emailInput = document.getElementById('email');
+    const submitBtn = document.getElementById('submitBtn');
+    const message = document.getElementById('message');
+
+    function showMessage(text, tone = 'info') {
+      message.textContent = text;
+      message.className = `notice ${tone}`;
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const email = emailInput.value.trim();
+      if (!email) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+      showMessage('Sending your secure login link...', 'info');
+
+      try {
+        const redirectTo = `${window.location.origin}/app`;
+        const { error } = await client.auth.signInWithOtp({
+          email,
+          options: {
+            emailRedirectTo: redirectTo,
+          },
+        });
+
+        if (error) throw error;
+
+        showMessage('Magic link sent. Check your inbox and open the link on this device.', 'success');
+        form.reset();
+      } catch (error) {
+        showMessage(error.message || 'Could not send magic link. Please try again.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send magic link';
+      }
+    });
+  </script>
+</body>
+</html>

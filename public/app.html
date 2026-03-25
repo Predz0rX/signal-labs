@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signal Labs — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/public/app.css" />
+</head>
+<body class="app-shell">
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div>
+        <div class="brand">signal<span>labs</span></div>
+        <p class="sidebar-copy">Private client workspace</p>
+      </div>
+      <nav class="nav stack-sm">
+        <button class="nav-link active" data-view="dashboard">Dashboard</button>
+        <button class="nav-link" data-view="account">Account</button>
+        <button class="nav-link" data-view="plans">Plans</button>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="/">Public landing</a>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" id="pageEyebrow">Client dashboard</p>
+          <h1 id="pageTitle">Your reports</h1>
+        </div>
+        <div class="topbar-actions">
+          <span class="pill" id="userEmail">Loading...</span>
+          <button class="button button-secondary" id="signOutBtn">Sign out</button>
+        </div>
+      </header>
+
+      <section id="loadingState" class="panel center-panel">
+        <div class="loader"></div>
+        <p>Checking your secure session...</p>
+      </section>
+
+      <section id="dashboardView" class="view hidden stack-xl">
+        <div class="metrics-grid">
+          <article class="metric-card">
+            <span class="metric-label">Total reports</span>
+            <strong id="metricReports">0</strong>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Latest industry</span>
+            <strong id="metricIndustry">—</strong>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Latest update</span>
+            <strong id="metricDate">—</strong>
+          </article>
+        </div>
+
+        <section class="panel stack-lg">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Saved reports</p>
+              <h2>Open an existing market report</h2>
+            </div>
+            <a class="button button-secondary" href="/">Generate a new report</a>
+          </div>
+          <div id="reportsEmpty" class="empty hidden">
+            <h3>No reports yet</h3>
+            <p>Once a report is generated for this email, it will appear here automatically.</p>
+          </div>
+          <div id="reportsList" class="report-list"></div>
+        </section>
+      </section>
+
+      <section id="accountView" class="view hidden stack-xl">
+        <section class="panel stack-lg">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Account</p>
+              <h2>Profile basics</h2>
+            </div>
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item"><span>Email</span><strong id="accountEmail">—</strong></div>
+            <div class="detail-item"><span>User ID</span><strong id="accountUserId">—</strong></div>
+            <div class="detail-item"><span>Last sign in</span><strong id="accountLastSignIn">—</strong></div>
+            <div class="detail-item"><span>Reports on file</span><strong id="accountReportCount">0</strong></div>
+          </div>
+        </section>
+      </section>
+
+      <section id="plansView" class="view hidden stack-xl">
+        <section class="panel stack-lg">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Plans</p>
+              <h2>Upgrade paths</h2>
+            </div>
+          </div>
+          <div class="plans-grid">
+            <article class="plan-card">
+              <span class="plan-tier">Pulse</span>
+              <strong class="plan-price">$149<span>/mo</span></strong>
+              <p>Weekly market digest and competitor monitoring for founders who need consistent visibility.</p>
+              <ul>
+                <li>Weekly intelligence brief</li>
+                <li>3 competitors tracked</li>
+                <li>Email delivery</li>
+              </ul>
+            </article>
+            <article class="plan-card featured">
+              <span class="plan-tier">Intel</span>
+              <strong class="plan-price">$499<span>/mo</span></strong>
+              <p>Funding alerts, sentiment tracking, and a live dashboard for growing operators.</p>
+              <ul>
+                <li>Funding & market alerts</li>
+                <li>Dashboard access</li>
+                <li>Expanded competitor tracking</li>
+              </ul>
+            </article>
+            <article class="plan-card">
+              <span class="plan-tier">Pro</span>
+              <strong class="plan-price">$1,500<span>/mo</span></strong>
+              <p>Benchmarking, lead intelligence, and quarterly strategic reporting for serious teams.</p>
+              <ul>
+                <li>Benchmarking suite</li>
+                <li>50 lead-intel profiles/mo</li>
+                <li>Quarterly analyst report</li>
+              </ul>
+            </article>
+            <article class="plan-card">
+              <span class="plan-tier">Enterprise</span>
+              <strong class="plan-price">Custom</strong>
+              <p>Custom data pipelines, API access, and embedded advisory support.</p>
+              <ul>
+                <li>Custom research workflows</li>
+                <li>API / data export</li>
+                <li>Advisory support</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/public/app-config.js"></script>
+  <script src="/public/app.js"></script>
+</body>
+</html>

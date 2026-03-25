@@ -14,6 +14,7 @@ const { createClient } = require('@supabase/supabase-js');
 const app = express();
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Ensure dirs exist
 const reportsDir = path.join(__dirname, 'reports');
@@ -46,8 +47,22 @@ async function loadReportPersistent(token) {
   return data.payload;
 }
 
+function getClientRuntimeConfigScript() {
+  const url = JSON.stringify(process.env.SIGNAL_LABS_SUPABASE_URL || process.env.SUPABASE_URL || '');
+  const anonKey = JSON.stringify(process.env.SIGNAL_LABS_SUPABASE_ANON_KEY || '');
+  return `window.__SIGNAL_LABS_SUPABASE_URL__ = ${url}; window.__SIGNAL_LABS_SUPABASE_ANON_KEY__ = ${anonKey};`;
+}
+
+function sendHtmlWithRuntimeConfig(res, filePath) {
+  let html = fs.readFileSync(filePath, 'utf-8');
+  html = html.replace('</head>', `  <script>${getClientRuntimeConfigScript()}</script>\n</head>`);
+  res.type('html').send(html);
+}
+
 // Serve landing page
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/auth', (req, res) => sendHtmlWithRuntimeConfig(res, path.join(__dirname, 'public', 'auth.html')));
+app.get(['/app', '/dashboard', '/account', '/plans'], (req, res) => sendHtmlWithRuntimeConfig(res, path.join(__dirname, 'public', 'app.html')));
 
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
