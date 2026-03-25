@@ -8,7 +8,7 @@ const { fetchNews } = require('./lib/fetchNews');
 const { fetchBLS } = require('./lib/fetchBLS');
 const { fetchTrends } = require('./lib/fetchTrends');
 const { generateReport } = require('./lib/generateReport');
-const { sendEmail } = require('./lib/sendEmail');
+const axios = require('axios');
 
 const app = express();
 app.use(express.json({ limit: '2mb' }));
@@ -17,9 +17,51 @@ app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 // Ensure dirs exist
 const reportsDir = path.join(__dirname, 'reports');
 const leadsFile = path.join(__dirname, 'leads', 'leads.json');
+const GITHUB_REPO = process.env.GITHUB_REPORTS_REPO || 'Predz0rX/signal-labs';
+const GITHUB_BRANCH = process.env.GITHUB_REPORTS_BRANCH || 'master';
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
 if (!fs.existsSync(reportsDir)) fs.mkdirSync(reportsDir, { recursive: true });
 if (!fs.existsSync(path.dirname(leadsFile))) fs.mkdirSync(path.dirname(leadsFile), { recursive: true });
 if (!fs.existsSync(leadsFile)) fs.writeFileSync(leadsFile, '[]');
+
+async function saveReportPersistent(token, reportPayload) {
+  const fileName = `reports/report-${token}.json`;
+  const content = JSON.stringify(reportPayload, null, 2);
+  fs.writeFileSync(path.join(reportsDir, `report-${token}.json`), content);
+
+  if (!GITHUB_TOKEN) return { mode: 'local' };
+
+  const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${fileName}`;
+  await axios.put(url, {
+    message: `Add report ${token}`,
+    content: Buffer.from(content, 'utf8').toString('base64'),
+    branch: GITHUB_BRANCH
+  }, {
+    headers: {
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
+      Accept: 'application/vnd.github+json',
+      'User-Agent': 'signal-labs'
+    },
+    timeout: 30000
+  });
+
+  return { mode: 'github', rawUrl: `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/${fileName}` };
+}
+
+async function loadReportPersistent(token) {
+  const localPath = path.join(reportsDir, `report-${token}.json`);
+  if (fs.existsSync(localPath)) {
+    return JSON.parse(fs.readFileSync(localPath, 'utf-8'));
+  }
+  if (!GITHUB_TOKEN) return null;
+  try {
+    const url = `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/reports/report-${token}.json`;
+    const { data } = await axios.get(url, { timeout: 15000 });
+    return data;
+  } catch {
+    return null;
+  }
+}
 
 // Serve landing page
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
@@ -35,29 +77,21 @@ app.get('/report/:token', (req, res) => {
 });
 
 // ── REPORT DATA API ──
-app.get('/api/report-data/:token', (req, res) => {
+app.get('/api/report-data/:token', async (req, res) => {
   const token = req.params.token.replace(/[^a-zA-Z0-9_-]/g, '');
-  const dataPath = path.join(reportsDir, `report-${token}.json`);
-  if (!fs.existsSync(dataPath)) {
+  const data = await loadReportPersistent(token);
+  if (!data) {
     return res.status(404).json({ error: 'Report not found or expired' });
-  }
-  const data = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
-  if (!data.meta.viewed) {
-    data.meta.viewed = true;
-    data.meta.viewedAt = new Date().toISOString();
-    fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
   }
   res.json(data);
 });
 
 // ── SEED REPORT (for uploading generated reports to server) ──
-app.post('/api/seed', (req, res) => {
+app.post('/api/seed', async (req, res) => {
   const { token, data, secret } = req.body;
   if (secret !== (process.env.SEED_SECRET || 'signallabs2026')) return res.status(403).json({ error: 'Forbidden' });
   if (!token || !data) return res.status(400).json({ error: 'Missing token or data' });
-  const p = path.join(reportsDir, `report-${token}.json`);
-  fs.mkdirSync(reportsDir, { recursive: true });
-  fs.writeFileSync(p, JSON.stringify(data, null, 2));
+  await saveReportPersistent(token, data);
   console.log(`[seed] Report seeded: ${token}`);
   res.json({ ok: true, url: `/report/${token}` });
 });
@@ -115,7 +149,7 @@ app.post('/api/report', async (req, res) => {
         viewed: false, viewedAt: null
       }
     };
-    fs.writeFileSync(path.join(reportsDir, `report-${token}.json`), JSON.stringify(reportPayload, null, 2));
+    await saveReportPersistent(token, reportPayload);
 
     // 5. Build report URL
     const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
