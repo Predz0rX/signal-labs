@@ -9,6 +9,7 @@ const { fetchBLS } = require('./lib/fetchBLS');
 const { fetchTrends } = require('./lib/fetchTrends');
 const { generateReport } = require('./lib/generateReport');
 const axios = require('axios');
+const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 app.use(express.json({ limit: '2mb' }));
@@ -17,50 +18,32 @@ app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 // Ensure dirs exist
 const reportsDir = path.join(__dirname, 'reports');
 const leadsFile = path.join(__dirname, 'leads', 'leads.json');
-const GITHUB_REPO = process.env.GITHUB_REPORTS_REPO || 'Predz0rX/signal-labs';
-const GITHUB_BRANCH = process.env.GITHUB_REPORTS_BRANCH || 'master';
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
-if (!fs.existsSync(reportsDir)) fs.mkdirSync(reportsDir, { recursive: true });
-if (!fs.existsSync(path.dirname(leadsFile))) fs.mkdirSync(path.dirname(leadsFile), { recursive: true });
-if (!fs.existsSync(leadsFile)) fs.writeFileSync(leadsFile, '[]');
+const SUPABASE_URL = process.env.SUPABASE_URL || '';
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const supabase = (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY)
+  ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } })
+  : null;
 
 async function saveReportPersistent(token, reportPayload) {
-  const fileName = `reports/report-${token}.json`;
   const content = JSON.stringify(reportPayload, null, 2);
   fs.writeFileSync(path.join(reportsDir, `report-${token}.json`), content);
-
-  if (!GITHUB_TOKEN) return { mode: 'local' };
-
-  const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${fileName}`;
-  await axios.put(url, {
-    message: `Add report ${token}`,
-    content: Buffer.from(content, 'utf8').toString('base64'),
-    branch: GITHUB_BRANCH
-  }, {
-    headers: {
-      Authorization: `Bearer ${GITHUB_TOKEN}`,
-      Accept: 'application/vnd.github+json',
-      'User-Agent': 'signal-labs'
-    },
-    timeout: 30000
+  if (!supabase) return { mode: 'local' };
+  const { error } = await supabase.from('reports').upsert({
+    token,
+    email: reportPayload?.meta?.email || null,
+    payload: reportPayload
   });
-
-  return { mode: 'github', rawUrl: `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/${fileName}` };
+  if (error) throw new Error(`Supabase save failed: ${error.message}`);
+  return { mode: 'supabase' };
 }
 
 async function loadReportPersistent(token) {
   const localPath = path.join(reportsDir, `report-${token}.json`);
-  if (fs.existsSync(localPath)) {
-    return JSON.parse(fs.readFileSync(localPath, 'utf-8'));
-  }
-  if (!GITHUB_TOKEN) return null;
-  try {
-    const url = `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/reports/report-${token}.json`;
-    const { data } = await axios.get(url, { timeout: 15000 });
-    return data;
-  } catch {
-    return null;
-  }
+  if (fs.existsSync(localPath)) return JSON.parse(fs.readFileSync(localPath, 'utf-8'));
+  if (!supabase) return null;
+  const { data, error } = await supabase.from('reports').select('payload').eq('token', token).single();
+  if (error || !data) return null;
+  return data.payload;
 }
 
 // Serve landing page
