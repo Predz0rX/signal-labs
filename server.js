@@ -42,13 +42,24 @@ app.get('/api/report-data/:token', (req, res) => {
     return res.status(404).json({ error: 'Report not found or expired' });
   }
   const data = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
-  // Mark as viewed
   if (!data.meta.viewed) {
     data.meta.viewed = true;
     data.meta.viewedAt = new Date().toISOString();
     fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
   }
   res.json(data);
+});
+
+// ── SEED REPORT (for uploading generated reports to server) ──
+app.post('/api/seed', (req, res) => {
+  const { token, data, secret } = req.body;
+  if (secret !== (process.env.SEED_SECRET || 'signallabs2026')) return res.status(403).json({ error: 'Forbidden' });
+  if (!token || !data) return res.status(400).json({ error: 'Missing token or data' });
+  const p = path.join(reportsDir, `report-${token}.json`);
+  fs.mkdirSync(reportsDir, { recursive: true });
+  fs.writeFileSync(p, JSON.stringify(data, null, 2));
+  console.log(`[seed] Report seeded: ${token}`);
+  res.json({ ok: true, url: `/report/${token}` });
 });
 
 // ── FREE REPORT ENDPOINT ──
