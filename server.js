@@ -108,30 +108,22 @@ app.post('/api/report', async (req, res) => {
 
   console.log(`[server] Report request: ${email} | ${industry} | ${country || 'N/A'}`);
 
-  const userContext = {
-    industry, country: country || 'United States',
-    stage: stage || 'unknown', teamSize: team || 'unknown',
-    pains: pains || [], bigDecision: decision || '',
-    namedCompetitors: competitorsList || '', competitiveAdvantage: advantage || 'unknown'
-  };
+  const requestId = crypto.randomUUID();
+  if (!supabase) return res.status(500).json({ error: 'Queue storage not configured' });
 
-  // Respond immediately — process in background to avoid Render's 30s timeout
-  res.json({ success: true, message: 'Report on the way! Check your inbox in about 5 minutes.' });
-
-  try {
-    const child = spawn(process.execPath, [path.join(__dirname, 'process-report.js'), JSON.stringify({
-      email, industry, company, country, stage, team, pains, decision, competitorsList, advantage
-    })], {
-      detached: true,
-      stdio: 'ignore',
-      windowsHide: true,
-      env: process.env
-    });
-    child.unref();
-    console.log(`[server] Spawned worker for ${email}`);
-  } catch (err) {
-    console.error('[server] Worker spawn error:', err.message);
+  const payload = { email, industry, company, country, stage, team, pains, decision, competitorsList, advantage };
+  const { error: queueError } = await supabase.from('report_requests').insert({
+    id: requestId,
+    email,
+    status: 'pending',
+    payload
+  });
+  if (queueError) {
+    console.error('[server] Queue insert error:', queueError.message);
+    return res.status(500).json({ error: 'Could not queue report request' });
   }
+
+  return res.json({ success: true, message: 'Report queued. Check your inbox in a few minutes.', requestId });
 });
 
 // ── EMAIL WITH MAGIC LINK ──
