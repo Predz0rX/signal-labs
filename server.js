@@ -67,6 +67,11 @@ app.post('/api/report', async (req, res) => {
     namedCompetitors: competitorsList || '', competitiveAdvantage: advantage || 'unknown'
   };
 
+  // Respond immediately — process in background to avoid Render's 30s timeout
+  res.json({ success: true, message: 'Report on the way! Check your inbox in about 5 minutes.' });
+
+  // Process async (fire and forget)
+  setImmediate(async () => {
   try {
     // 1. Fetch data in parallel
     const [newsData, blsData, trendsData] = await Promise.all([
@@ -124,12 +129,11 @@ app.post('/api/report', async (req, res) => {
     fs.writeFileSync(leadsFile, JSON.stringify(leads, null, 2));
 
     console.log(`[server] Report saved: ${token} | Email sent to ${email}`);
-    res.json({ success: true, message: 'Report on the way! Check your inbox in a few minutes.' });
 
   } catch (err) {
-    console.error('[server] Error:', err);
-    res.status(500).json({ error: 'Failed to generate report. Please try again.' });
+    console.error('[server] Background report error:', err.message);
   }
+  }); // end setImmediate
 });
 
 // ── EMAIL WITH MAGIC LINK ──
