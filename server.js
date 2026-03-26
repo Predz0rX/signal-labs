@@ -99,6 +99,93 @@ app.post('/api/seed', async (req, res) => {
   res.json({ ok: true, url: `/report/${token}` });
 });
 
+async function processReportRequest({ email, industry, company, country, stage, team, pains, decision, competitorsList, advantage, requestId = null }) {
+  const userContext = {
+    industry,
+    country: country || 'United States',
+    stage: stage || 'unknown',
+    teamSize: team || 'unknown',
+    pains: pains || [],
+    bigDecision: decision || '',
+    namedCompetitors: competitorsList || '',
+    competitiveAdvantage: advantage || 'unknown'
+  };
+
+  const [newsData, blsData, trendsData] = await Promise.all([
+    fetchNews(industry),
+    fetchBLS(industry),
+    fetchTrends(industry)
+  ]);
+
+  userContext._trendsScore = trendsData.interestScore || 50;
+  userContext._blsYoY = blsData.yearOverYearChange || 'N/A';
+  userContext._newsCount = newsData.length;
+
+  const reportData = await generateReport({ industry, company, country, userContext, newsData, blsData, trendsData });
+  const token = crypto.randomBytes(16).toString('hex');
+  const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const reportPayload = {
+    report: reportData,
+    meta: {
+      token,
+      email,
+      industry,
+      company: company || '',
+      country: country || 'United States',
+      date,
+      stage: stage || '',
+      teamSize: team || '',
+      pains: pains || [],
+      bigDecision: decision || '',
+      blsYoY: blsData.yearOverYearChange || 'N/A',
+      trendsScore: trendsData.interestScore || 50,
+      newsCount: newsData.length,
+      createdAt: new Date().toISOString(),
+      viewed: false,
+      viewedAt: null
+    }
+  };
+
+  await saveReportPersistent(token, reportPayload);
+
+  const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+  const reportUrl = `${baseUrl}/report/${token}`;
+  await sendEmailMagicLink({ to: email, industry, company, reportUrl });
+
+  const leads = JSON.parse(fs.readFileSync(leadsFile, 'utf-8'));
+  leads.push({
+    id: `lead_${Date.now()}`,
+    email,
+    company: company || '',
+    timestamp: new Date().toISOString(),
+    industry,
+    country: country || '',
+    stage: stage || '',
+    teamSize: team || '',
+    pains: pains || [],
+    bigDecision: decision || '',
+    namedCompetitors: competitorsList || '',
+    competitiveAdvantage: advantage || '',
+    reportToken: token,
+    reportUrl,
+    followUpSequence: determineSequence(userContext),
+    status: 'report_sent',
+    tags: buildTags(userContext)
+  });
+  fs.writeFileSync(leadsFile, JSON.stringify(leads, null, 2));
+
+  if (supabase && requestId) {
+    await supabase.from('report_requests').update({
+      status: 'done',
+      report_token: token,
+      completed_at: new Date().toISOString()
+    }).eq('id', requestId);
+  }
+
+  console.log(`[server] Report processed: ${token} -> ${email}`);
+  return { token, reportUrl };
+}
+
 // ── FREE REPORT ENDPOINT ──
 app.post('/api/report', async (req, res) => {
   const { email, industry, company, country, stage, team, pains, decision, competitorsList, advantage } = req.body;
@@ -109,21 +196,37 @@ app.post('/api/report', async (req, res) => {
   console.log(`[server] Report request: ${email} | ${industry} | ${country || 'N/A'}`);
 
   const requestId = crypto.randomUUID();
-  if (!supabase) return res.status(500).json({ error: 'Queue storage not configured' });
-
   const payload = { email, industry, company, country, stage, team, pains, decision, competitorsList, advantage };
-  const { error: queueError } = await supabase.from('report_requests').insert({
-    id: requestId,
-    email,
-    status: 'pending',
-    payload
-  });
-  if (queueError) {
-    console.error('[server] Queue insert error:', queueError.message);
-    return res.status(500).json({ error: 'Could not queue report request' });
+
+  if (supabase) {
+    const { error: queueError } = await supabase.from('report_requests').insert({
+      id: requestId,
+      email,
+      status: 'processing',
+      started_at: new Date().toISOString(),
+      payload
+    });
+    if (queueError) {
+      console.error('[server] Queue insert error:', queueError.message);
+    }
   }
 
-  return res.json({ success: true, message: 'Report queued. Check your inbox in a few minutes.', requestId });
+  setTimeout(async () => {
+    try {
+      await processReportRequest({ ...payload, requestId });
+    } catch (err) {
+      console.error('[server] Background report processing failed:', err && err.stack ? err.stack : err);
+      if (supabase) {
+        await supabase.from('report_requests').update({
+          status: 'failed',
+          error_message: String(err.message || err),
+          completed_at: new Date().toISOString()
+        }).eq('id', requestId);
+      }
+    }
+  }, 0);
+
+  return res.json({ success: true, message: 'Report started. Check your inbox in a few minutes.', requestId });
 });
 
 // ── EMAIL WITH MAGIC LINK ──
