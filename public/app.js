@@ -84,6 +84,9 @@ function renderReports(reports) {
       </div>
       <div class="report-card-actions">
         <a class="button button-primary" href="/report/${meta.token}">Open report</a>
+        <a class="button button-secondary" href="/report/${meta.token}/export/pptx" title="Download PowerPoint" style="font-size:11px;padding:6px 12px">PPTX</a>
+        <a class="button button-secondary" href="/report/${meta.token}/export/xlsx" title="Download Excel" style="font-size:11px;padding:6px 12px">XLSX</a>
+        <a class="button button-secondary" href="/report/${meta.token}/export/pdf" title="Download PDF" style="font-size:11px;padding:6px 12px">PDF</a>
       </div>
     `;
     list.appendChild(article);

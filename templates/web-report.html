@@ -200,6 +200,80 @@ body { font-family: var(--font); background: #F8FAFF; color: var(--g900); line-h
 .final-cta .cta-btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 28px; background: var(--blue); color: #fff; border-radius: 10px; font-size: 14px; font-weight: 700; text-decoration: none; transition: background .2s, transform .2s; position: relative; }
 .final-cta .cta-btn:hover { background: #0062CC; transform: translateY(-1px); }
 
+/* ── EXPORT BUTTONS ── */
+.export-btns { display: flex !important; }
+.export-btn { padding: 4px 10px; background: rgba(255,255,255,.1); color: rgba(255,255,255,.7); border-radius: 6px; font-size: 10px; font-weight: 700; text-decoration: none; cursor: pointer; transition: background .2s, color .2s; letter-spacing: .3px; }
+.export-btn:hover { background: var(--blue); color: #fff; }
+
+/* ── CONFIDENCE BADGES ── */
+.conf-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 100px; letter-spacing: .3px; text-transform: uppercase; }
+.conf-verified { background: #ECFDF5; color: #059669; }
+.conf-verified::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #059669; }
+.conf-estimated { background: #FEF3C7; color: #D97706; }
+.conf-estimated::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #D97706; }
+.conf-projected { background: #F3F4F6; color: #6B7280; }
+.conf-projected::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #6B7280; }
+.conf-bar { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 10px; color: var(--g400); }
+.conf-bar-fill { height: 4px; border-radius: 2px; background: linear-gradient(90deg, #059669, #0071E3); }
+
+/* ── RISK MATRIX ── */
+.risk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+@media(max-width: 600px) { .risk-grid { grid-template-columns: repeat(2, 1fr); } }
+.risk-item { background: #fff; border: 1px solid var(--g200); border-radius: 10px; padding: 14px; text-align: center; }
+.risk-score { font-size: 28px; font-weight: 800; font-family: var(--mono); line-height: 1; margin-bottom: 4px; }
+.risk-score.low { color: #059669; }
+.risk-score.med { color: #D97706; }
+.risk-score.high { color: #DC2626; }
+.risk-label { font-size: 10px; font-weight: 700; color: var(--g500); text-transform: uppercase; letter-spacing: .5px; }
+.risk-detail { font-size: 10px; color: var(--g400); margin-top: 4px; line-height: 1.4; }
+.risk-summary { background: #FEF2F2; border: 1px solid #FECACA; border-radius: 10px; padding: 14px 16px; margin-top: 12px; }
+.risk-summary-title { font-size: 11px; font-weight: 800; color: var(--red); margin-bottom: 4px; }
+.risk-summary p { font-size: 12px; color: var(--g700); line-height: 1.55; }
+
+/* ── GROWTH PLAYBOOK ── */
+.channel-card { background: #fff; border: 1px solid var(--g200); border-radius: var(--radius); padding: 16px; margin-bottom: 10px; }
+.channel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.channel-name { font-size: 14px; font-weight: 800; color: var(--black); }
+.channel-roi { padding: 3px 10px; border-radius: 100px; font-size: 9px; font-weight: 800; text-transform: uppercase; }
+.channel-roi.high { background: var(--green-l); color: var(--green); }
+.channel-roi.medium { background: #FEF3C7; color: var(--amber); }
+.channel-roi.low { background: var(--g100); color: var(--g500); }
+.channel-meta { display: flex; gap: 16px; font-size: 11px; color: var(--g500); margin-bottom: 6px; }
+.channel-rationale { font-size: 12px; color: var(--g600); line-height: 1.55; }
+.timeline-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+@media(max-width: 600px) { .timeline-grid { grid-template-columns: 1fr; } }
+.month-card { background: #fff; border: 1px solid var(--g200); border-radius: 10px; padding: 14px; }
+.month-label { font-size: 10px; font-weight: 800; color: var(--blue); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; }
+.month-focus { font-size: 13px; font-weight: 700; color: var(--black); margin-bottom: 6px; }
+.month-items { font-size: 11px; color: var(--g500); line-height: 1.6; }
+
+/* ── CUSTOMER INTELLIGENCE ── */
+.icp-card { background: linear-gradient(135deg, var(--blue-l), #F0F9FF); border: 2px solid var(--blue); border-radius: var(--radius); padding: 20px; }
+.icp-title { font-size: 16px; font-weight: 800; color: var(--black); margin-bottom: 4px; }
+.icp-demo { font-size: 12px; color: var(--g500); margin-bottom: 12px; }
+.icp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+@media(max-width: 540px) { .icp-grid { grid-template-columns: 1fr; } }
+.icp-col-title { font-size: 9px; font-weight: 800; color: var(--blue); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; }
+.icp-list { font-size: 12px; color: var(--g700); line-height: 1.7; }
+.messaging-card { background: #fff; border: 1px solid var(--g200); border-radius: 10px; padding: 14px; margin-top: 10px; }
+.messaging-angle { font-size: 13px; font-weight: 700; color: var(--black); margin-bottom: 4px; }
+.messaging-evidence { font-size: 11px; color: var(--g500); line-height: 1.55; }
+.messaging-channel { display: inline-flex; padding: 2px 8px; background: var(--blue-l); color: var(--blue); border-radius: 4px; font-size: 9px; font-weight: 700; margin-top: 4px; }
+
+/* ── OPPORTUNITY RADAR ── */
+.micro-trend { background: #fff; border: 1px solid var(--g200); border-radius: 10px; padding: 14px; margin-bottom: 10px; display: flex; gap: 14px; align-items: flex-start; }
+.velocity-badge { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; font-family: var(--mono); flex-shrink: 0; }
+.velocity-badge.hot { background: #FEF2F2; color: var(--red); }
+.velocity-badge.warm { background: #FEF3C7; color: var(--amber); }
+.velocity-badge.cool { background: var(--blue-l); color: var(--blue); }
+.micro-name { font-size: 13px; font-weight: 700; color: var(--black); margin-bottom: 3px; }
+.micro-evidence { font-size: 11px; color: var(--g500); line-height: 1.5; }
+.micro-time { font-size: 10px; color: var(--g400); margin-top: 3px; }
+
+/* ── SOURCES FOOTER ── */
+.sources-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.source-chip { padding: 3px 10px; background: var(--g100); border-radius: 100px; font-size: 9px; font-weight: 700; color: var(--g500); text-transform: uppercase; letter-spacing: .3px; }
+
 /* ── FOOTER ── */
 .footer { text-align: center; padding: 24px; font-size: 11px; color: var(--g400); border-top: 1px solid var(--g100); margin-top: 20px; }
 </style>
@@ -212,6 +286,11 @@ body { font-family: var(--font); background: #F8FAFF; color: var(--g900); line-h
     <a href="https://signal-labs-omega.vercel.app" class="logo">signal<span>labs</span></a>
     <div class="header-badge">
       <span class="confidential-tag">Confidential Report</span>
+      <div class="export-btns" id="export-btns" style="display:none;gap:6px;margin-left:12px">
+        <a class="export-btn" id="btn-pdf" title="Download PDF">PDF</a>
+        <a class="export-btn" id="btn-pptx" title="Download PowerPoint">PPTX</a>
+        <a class="export-btn" id="btn-xlsx" title="Download Excel">XLSX</a>
+      </div>
     </div>
   </div>
 </header>
@@ -364,6 +443,36 @@ body { font-family: var(--font); background: #F8FAFF; color: var(--g900); line-h
     <div class="timeline" id="timeline-container"></div>
   </div>
 
+  <!-- AAA: RISK ASSESSMENT -->
+  <div class="section fade-up" id="risk-section" style="display:none">
+    <div class="section-title">Risk Assessment Matrix</div>
+    <div id="risk-container"></div>
+  </div>
+
+  <!-- AAA: CUSTOMER INTELLIGENCE -->
+  <div class="section fade-up" id="customer-section" style="display:none">
+    <div class="section-title">Customer & Audience Intelligence</div>
+    <div id="customer-container"></div>
+  </div>
+
+  <!-- AAA: OPPORTUNITY RADAR -->
+  <div class="section fade-up" id="radar-section" style="display:none">
+    <div class="section-title">Market Opportunity Radar</div>
+    <div id="radar-container"></div>
+  </div>
+
+  <!-- AAA: GROWTH PLAYBOOK -->
+  <div class="section fade-up" id="playbook-section" style="display:none">
+    <div class="section-title">90-Day Growth Playbook</div>
+    <div id="playbook-container"></div>
+  </div>
+
+  <!-- AAA: CONFIDENCE & SOURCES -->
+  <div class="section fade-up" id="confidence-section" style="display:none">
+    <div class="section-title">Data Confidence & Sources</div>
+    <div id="confidence-container"></div>
+  </div>
+
   <!-- LOCKED SECTIONS -->
   <div class="section fade-up">
     <div class="section-title">Unlock the Full Intelligence Picture</div>
@@ -382,7 +491,7 @@ body { font-family: var(--font); background: #F8FAFF; color: var(--g900); line-h
 </main>
 
 <footer class="footer">
-  Generated by Signal Labs using real data from BLS, NewsAPI, and Google Trends. For strategic reference only.
+  Generated by Signal Labs using real data from FRED, SEC EDGAR, BLS, Alpha Vantage, World Bank, OECD, NewsAPI, Reddit, HackerNews, OpenAlex &amp; Google Trends. For strategic reference only.
   &nbsp;&bull;&nbsp; <a href="https://signal-labs-omega.vercel.app" style="color:inherit">signal-labs-omega.vercel.app</a>
 </footer>
 
@@ -576,6 +685,118 @@ function renderReport(r, meta) {
         </div>
       </div>
     </div>`).join('');
+
+  // ── EXPORT BUTTONS ──
+  const exportBtns = document.getElementById('export-btns');
+  exportBtns.style.display = 'flex';
+  document.getElementById('btn-pdf').href = '/report/' + token + '/export/pdf';
+  document.getElementById('btn-pptx').href = '/report/' + token + '/export/pptx';
+  document.getElementById('btn-xlsx').href = '/report/' + token + '/export/xlsx';
+
+  // ── AAA: EXECUTIVE BRIEF (replaces simple rationale) ──
+  if (r.executiveBrief) {
+    document.getElementById('exec-text').textContent = r.executiveBrief;
+  }
+  if (r.bottomLine) {
+    const execBanner = document.querySelector('.exec-banner');
+    execBanner.innerHTML += '<div style="margin-top:12px;padding:10px 14px;background:#F0FDF9;border-left:3px solid #059669;border-radius:0 8px 8px 0;font-size:12px;font-weight:700;color:#065F46">' + safe(r.bottomLine) + '</div>';
+  }
+
+  // ── AAA: RISK ASSESSMENT ──
+  if (r.riskAssessment && r.riskAssessment.risks) {
+    document.getElementById('risk-section').style.display = '';
+    const risks = r.riskAssessment.risks;
+    let riskHtml = '<div class="risk-grid">';
+    for (const [cat, data] of Object.entries(risks)) {
+      const s = Number(data.score) || 5;
+      const cls = s <= 3 ? 'low' : s <= 6 ? 'med' : 'high';
+      const label = cat.replace(/([A-Z])/g, ' $1').trim();
+      riskHtml += '<div class="risk-item"><div class="risk-score ' + cls + '">' + s + '</div><div class="risk-label">' + safe(label) + '</div><div class="risk-detail">' + safe((data.detail || '').slice(0, 80)) + '</div></div>';
+    }
+    riskHtml += '</div>';
+    if (r.riskAssessment.topRisk) {
+      riskHtml += '<div class="risk-summary"><div class="risk-summary-title">Top Risk</div><p>' + safe(r.riskAssessment.topRisk) + '</p></div>';
+    }
+    document.getElementById('risk-container').innerHTML = riskHtml;
+  }
+
+  // ── AAA: CUSTOMER INTELLIGENCE ──
+  if (r.customerIntelligence && r.customerIntelligence.icp) {
+    document.getElementById('customer-section').style.display = '';
+    const ci = r.customerIntelligence;
+    const icp = ci.icp;
+    let ciHtml = '<div class="icp-card">';
+    ciHtml += '<div class="icp-title">' + safe(icp.title) + '</div>';
+    ciHtml += '<div class="icp-demo">' + safe(icp.demographics) + '</div>';
+    ciHtml += '<div class="icp-grid">';
+    ciHtml += '<div><div class="icp-col-title">Pain Points</div><div class="icp-list">' + (icp.painPoints || []).map(p => '&bull; ' + safe(p)).join('<br>') + '</div></div>';
+    ciHtml += '<div><div class="icp-col-title">Buying Triggers</div><div class="icp-list">' + (icp.buyingTriggers || []).map(p => '&bull; ' + safe(p)).join('<br>') + '</div></div>';
+    ciHtml += '<div><div class="icp-col-title">Channels</div><div class="icp-list">' + (icp.preferredChannels || []).map(p => '&bull; ' + safe(p)).join('<br>') + '</div></div>';
+    ciHtml += '</div></div>';
+    // Messaging recommendations
+    if (ci.messagingRecommendations) {
+      ci.messagingRecommendations.forEach(m => {
+        ciHtml += '<div class="messaging-card"><div class="messaging-angle">' + safe(m.angle) + '</div><div class="messaging-evidence">' + safe(m.evidence) + '</div><span class="messaging-channel">' + safe(m.channel) + '</span></div>';
+      });
+    }
+    document.getElementById('customer-container').innerHTML = ciHtml;
+  }
+
+  // ── AAA: OPPORTUNITY RADAR ──
+  if (r.opportunityRadar && r.opportunityRadar.microTrends) {
+    document.getElementById('radar-section').style.display = '';
+    let radarHtml = '';
+    r.opportunityRadar.microTrends.forEach(mt => {
+      const v = Number(mt.velocityScore) || 5;
+      const cls = v >= 7 ? 'hot' : v >= 4 ? 'warm' : 'cool';
+      radarHtml += '<div class="micro-trend fade-up"><div class="velocity-badge ' + cls + '">' + v + '</div><div><div class="micro-name">' + safe(mt.trend) + '</div><div class="micro-evidence">' + safe(mt.evidence) + '</div><div class="micro-time">' + safe(mt.timeToMainstream) + ' to mainstream</div></div></div>';
+    });
+    if (r.opportunityRadar.timingSignal) {
+      radarHtml += '<div style="margin-top:12px;padding:12px 16px;background:var(--blue-l);border-radius:10px;font-size:12px;color:var(--blue);font-weight:600"><strong>Timing Signal:</strong> ' + safe(r.opportunityRadar.timingSignal) + '</div>';
+    }
+    document.getElementById('radar-container').innerHTML = radarHtml;
+  }
+
+  // ── AAA: GROWTH PLAYBOOK ──
+  if (r.growthPlaybook && r.growthPlaybook.channels) {
+    document.getElementById('playbook-section').style.display = '';
+    let gpHtml = '';
+    r.growthPlaybook.channels.forEach(ch => {
+      const roiCls = (ch.expectedROI || '').toLowerCase() === 'high' ? 'high' : (ch.expectedROI || '').toLowerCase() === 'medium' ? 'medium' : 'low';
+      gpHtml += '<div class="channel-card fade-up"><div class="channel-header"><span class="channel-name">' + safe(ch.channel) + '</span><span class="channel-roi ' + roiCls + '">' + safe(ch.expectedROI) + ' ROI</span></div><div class="channel-meta"><span>' + safe(ch.timeToResults) + '</span><span>' + safe(ch.budgetRange) + '</span></div><div class="channel-rationale">' + safe(ch.rationale) + '</div></div>';
+    });
+    // Timeline
+    const tl = r.growthPlaybook.timeline;
+    if (tl) {
+      gpHtml += '<div class="timeline-grid">';
+      ['month1', 'month2', 'month3'].forEach((m, i) => {
+        if (!tl[m]) return;
+        gpHtml += '<div class="month-card"><div class="month-label">Month ' + (i + 1) + '</div><div class="month-focus">' + safe(tl[m].focus) + '</div><div class="month-items">' + (tl[m].milestones || []).map(x => '&bull; ' + safe(x)).join('<br>') + '</div></div>';
+      });
+      gpHtml += '</div>';
+    }
+    if (r.growthPlaybook.priorityAction) {
+      gpHtml += '<div style="margin-top:12px;padding:12px 16px;background:#ECFDF5;border-left:3px solid #059669;border-radius:0 10px 10px 0;font-size:12px;font-weight:700;color:#065F46">Priority This Week: ' + safe(r.growthPlaybook.priorityAction) + '</div>';
+    }
+    document.getElementById('playbook-container').innerHTML = gpHtml;
+  }
+
+  // ── AAA: CONFIDENCE & SOURCES BAR ──
+  if (meta.overallConfidence || meta.sourcesUsed) {
+    document.getElementById('confidence-section').style.display = '';
+    const confPct = Math.round((meta.overallConfidence || 0) * 100);
+    const confLabel = confPct >= 70 ? 'verified' : confPct >= 40 ? 'estimated' : 'projected';
+    let confHtml = '<div style="background:#fff;border:1px solid var(--g200);border-radius:var(--radius);padding:18px">';
+    confHtml += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-size:14px;font-weight:700;color:var(--black)">Overall Data Confidence</span><span class="conf-badge conf-' + confLabel + '">' + confLabel + ' — ' + confPct + '%</span></div>';
+    confHtml += '<div style="height:8px;background:var(--g100);border-radius:4px;overflow:hidden;margin-bottom:14px"><div style="height:100%;width:' + confPct + '%;border-radius:4px;background:linear-gradient(90deg,#059669,#0071E3);transition:width 1s ease"></div></div>';
+    confHtml += '<div style="font-size:10px;color:var(--g400);margin-bottom:10px">' + (meta.modulesRun || []).length + ' modules analyzed with ' + (meta.sourcesUsed || []).length + ' data sources</div>';
+    confHtml += '<div class="sources-bar">';
+    (meta.sourcesUsed || []).forEach(s => {
+      confHtml += '<span class="source-chip">' + safe(s) + '</span>';
+    });
+    confHtml += '</div></div>';
+    document.getElementById('confidence-container').innerHTML = confHtml;
+  }
 
   // Trigger scroll animations
   const animObs = new IntersectionObserver(entries => {
