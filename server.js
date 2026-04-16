@@ -3,14 +3,15 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
-
-const { fetchNews } = require('./lib/fetchNews');
-const { fetchBLS } = require('./lib/fetchBLS');
-const { fetchTrends } = require('./lib/fetchTrends');
-const { generateReport } = require('./lib/generateReport');
-const axios = require('axios');
-const { spawn } = require('child_process');
 const { createClient } = require('@supabase/supabase-js');
+
+// Modular architecture
+const reportController = require('./lib/controllers/reportController');
+const apiController = require('./lib/controllers/apiController');
+const scheduler = require('./lib/scheduler');
+const { buildPPTX } = require('./lib/exporters/pptx');
+const { buildXLSX } = require('./lib/exporters/xlsx');
+const { buildPDF } = require('./lib/exporters/pdf');
 
 const app = express();
 app.use(express.json({ limit: '2mb' }));
@@ -30,27 +31,10 @@ if (!fs.existsSync(reportsDir)) fs.mkdirSync(reportsDir, { recursive: true });
 if (!fs.existsSync(path.dirname(leadsFile))) fs.mkdirSync(path.dirname(leadsFile), { recursive: true });
 if (!fs.existsSync(leadsFile)) fs.writeFileSync(leadsFile, '[]');
 
-async function saveReportPersistent(token, reportPayload) {
-  const content = JSON.stringify(reportPayload, null, 2);
-  fs.writeFileSync(path.join(reportsDir, `report-${token}.json`), content);
-  if (!supabase) return { mode: 'local' };
-  const { error } = await supabase.from('reports').upsert({
-    token,
-    email: reportPayload?.meta?.email || null,
-    payload: reportPayload
-  });
-  if (error) throw new Error(`Supabase save failed: ${error.message}`);
-  return { mode: 'supabase' };
-}
-
-async function loadReportPersistent(token) {
-  const localPath = path.join(reportsDir, `report-${token}.json`);
-  if (fs.existsSync(localPath)) return JSON.parse(fs.readFileSync(localPath, 'utf-8'));
-  if (!supabase) return null;
-  const { data, error } = await supabase.from('reports').select('payload').eq('token', token).single();
-  if (error || !data) return null;
-  return data.payload;
-}
+// Initialize all systems
+reportController.init({ supabaseClient: supabase, reportsDirectory: reportsDir, leadsFilePath: leadsFile });
+apiController.init({ supabaseClient: supabase });
+scheduler.init({ supabaseClient: supabase, controller: reportController });
 
 function getClientRuntimeConfigScript() {
   const url = JSON.stringify(process.env.SIGNAL_LABS_SUPABASE_URL || process.env.SUPABASE_URL || '');
@@ -64,129 +48,93 @@ function sendHtmlWithRuntimeConfig(res, filePath) {
   res.type('html').send(html);
 }
 
-// Serve landing page
+// ═══════════════════════════════════════════
+// ROUTES — Pages
+// ═══════════════════════════════════════════
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 app.get('/auth', (req, res) => sendHtmlWithRuntimeConfig(res, path.join(__dirname, 'public', 'auth.html')));
 app.get(['/app', '/dashboard', '/account', '/plans'], (req, res) => sendHtmlWithRuntimeConfig(res, path.join(__dirname, 'public', 'app.html')));
 
-// Health check
-app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
+// Health check (enriched with engine status)
+app.get('/health', (req, res) => res.json({
+  status: 'ok',
+  version: '2.0.0',
+  timestamp: new Date().toISOString(),
+  engine: 'modular-v2-aaa',
+  sources: require('./lib/core/DataSourceRegistry').getRegistered(),
+  modules: require('./lib/core/ReportEngine').getModules()
+}));
 
-// ── WEB REPORT VIEWER ──
+// ═══════════════════════════════════════════
+// ROUTES — Report Viewer
+// ═══════════════════════════════════════════
 app.get('/report/:token', (req, res) => {
   const templatePath = path.join(__dirname, 'templates', 'web-report.html');
   if (!fs.existsSync(templatePath)) return res.status(404).send('Report template not found');
   res.sendFile(templatePath);
 });
 
-// ── REPORT DATA API ──
 app.get('/api/report-data/:token', async (req, res) => {
   const token = req.params.token.replace(/[^a-zA-Z0-9_-]/g, '');
-  const data = await loadReportPersistent(token);
-  if (!data) {
-    return res.status(404).json({ error: 'Report not found or expired' });
-  }
+  const data = await reportController.loadReport(token);
+  if (!data) return res.status(404).json({ error: 'Report not found or expired' });
   res.json(data);
 });
 
-// ── SEED REPORT (for uploading generated reports to server) ──
+// ═══════════════════════════════════════════
+// ROUTES — Export (public, token-based)
+// ═══════════════════════════════════════════
+app.get('/report/:token/export/:format', async (req, res) => {
+  const token = req.params.token.replace(/[^a-zA-Z0-9_-]/g, '');
+  const format = req.params.format.toLowerCase();
+  const data = await reportController.loadReport(token);
+  if (!data) return res.status(404).json({ error: 'Report not found' });
+
+  try {
+    switch (format) {
+      case 'pptx': {
+        const buffer = await buildPPTX(data);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.presentationml.presentation');
+        res.setHeader('Content-Disposition', `attachment; filename="SignalLabs-${data.meta.industry}-Report.pptx"`);
+        return res.send(Buffer.from(buffer));
+      }
+      case 'xlsx': {
+        const buffer = await buildXLSX(data);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', `attachment; filename="SignalLabs-${data.meta.industry}-Data.xlsx"`);
+        return res.send(Buffer.from(buffer));
+      }
+      case 'pdf': {
+        const pdfPath = await buildPDF({
+          reportData: data.report, industry: data.meta.industry,
+          company: data.meta.company, country: data.meta.country, userContext: data.meta
+        });
+        return res.download(pdfPath);
+      }
+      default:
+        return res.status(400).json({ error: `Unsupported format: ${format}. Use pptx, xlsx, or pdf.` });
+    }
+  } catch (err) {
+    console.error(`[export] ${format} failed:`, err.message);
+    res.status(500).json({ error: `Export failed: ${err.message}` });
+  }
+});
+
+// ═══════════════════════════════════════════
+// ROUTES — Seed (admin)
+// ═══════════════════════════════════════════
 app.post('/api/seed', async (req, res) => {
   const { token, data, secret } = req.body;
   if (secret !== (process.env.SEED_SECRET || 'signallabs2026')) return res.status(403).json({ error: 'Forbidden' });
   if (!token || !data) return res.status(400).json({ error: 'Missing token or data' });
-  await saveReportPersistent(token, data);
+  await reportController.saveReport(token, data);
   console.log(`[seed] Report seeded: ${token}`);
   res.json({ ok: true, url: `/report/${token}` });
 });
 
-async function processReportRequest({ email, industry, company, country, stage, team, pains, decision, competitorsList, advantage, requestId = null }) {
-  const userContext = {
-    industry,
-    country: country || 'United States',
-    stage: stage || 'unknown',
-    teamSize: team || 'unknown',
-    pains: pains || [],
-    bigDecision: decision || '',
-    namedCompetitors: competitorsList || '',
-    competitiveAdvantage: advantage || 'unknown'
-  };
-
-  const [newsData, blsData, trendsData] = await Promise.all([
-    fetchNews(industry),
-    fetchBLS(industry),
-    fetchTrends(industry)
-  ]);
-
-  userContext._trendsScore = trendsData.interestScore || 50;
-  userContext._blsYoY = blsData.yearOverYearChange || 'N/A';
-  userContext._newsCount = newsData.length;
-
-  const reportData = await generateReport({ industry, company, country, userContext, newsData, blsData, trendsData });
-  const token = crypto.randomBytes(16).toString('hex');
-  const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  const reportPayload = {
-    report: reportData,
-    meta: {
-      token,
-      email,
-      industry,
-      company: company || '',
-      country: country || 'United States',
-      date,
-      stage: stage || '',
-      teamSize: team || '',
-      pains: pains || [],
-      bigDecision: decision || '',
-      blsYoY: blsData.yearOverYearChange || 'N/A',
-      trendsScore: trendsData.interestScore || 50,
-      newsCount: newsData.length,
-      createdAt: new Date().toISOString(),
-      viewed: false,
-      viewedAt: null
-    }
-  };
-
-  await saveReportPersistent(token, reportPayload);
-
-  const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
-  const reportUrl = `${baseUrl}/report/${token}`;
-  await sendEmailMagicLink({ to: email, industry, company, reportUrl });
-
-  const leads = JSON.parse(fs.readFileSync(leadsFile, 'utf-8'));
-  leads.push({
-    id: `lead_${Date.now()}`,
-    email,
-    company: company || '',
-    timestamp: new Date().toISOString(),
-    industry,
-    country: country || '',
-    stage: stage || '',
-    teamSize: team || '',
-    pains: pains || [],
-    bigDecision: decision || '',
-    namedCompetitors: competitorsList || '',
-    competitiveAdvantage: advantage || '',
-    reportToken: token,
-    reportUrl,
-    followUpSequence: determineSequence(userContext),
-    status: 'report_sent',
-    tags: buildTags(userContext)
-  });
-  fs.writeFileSync(leadsFile, JSON.stringify(leads, null, 2));
-
-  if (supabase && requestId) {
-    await supabase.from('report_requests').update({
-      status: 'done',
-      report_token: token,
-      completed_at: new Date().toISOString()
-    }).eq('id', requestId);
-  }
-
-  console.log(`[server] Report processed: ${token} -> ${email}`);
-  return { token, reportUrl };
-}
-
-// ── FREE REPORT ENDPOINT ──
+// ═══════════════════════════════════════════
+// ROUTES — Free Report Generation
+// ═══════════════════════════════════════════
 app.post('/api/report', async (req, res) => {
   const { email, industry, company, country, stage, team, pains, decision, competitorsList, advantage } = req.body;
 
@@ -200,27 +148,19 @@ app.post('/api/report', async (req, res) => {
 
   if (supabase) {
     const { error: queueError } = await supabase.from('report_requests').insert({
-      id: requestId,
-      email,
-      status: 'processing',
-      started_at: new Date().toISOString(),
-      payload
+      id: requestId, email, status: 'processing', started_at: new Date().toISOString(), payload
     });
-    if (queueError) {
-      console.error('[server] Queue insert error:', queueError.message);
-    }
+    if (queueError) console.error('[server] Queue insert error:', queueError.message);
   }
 
   setTimeout(async () => {
     try {
-      await processReportRequest({ ...payload, requestId });
+      await reportController.processReport({ ...payload, requestId });
     } catch (err) {
       console.error('[server] Background report processing failed:', err && err.stack ? err.stack : err);
       if (supabase) {
         await supabase.from('report_requests').update({
-          status: 'failed',
-          error_message: String(err.message || err),
-          completed_at: new Date().toISOString()
+          status: 'failed', error_message: String(err.message || err), completed_at: new Date().toISOString()
         }).eq('id', requestId);
       }
     }
@@ -229,61 +169,22 @@ app.post('/api/report', async (req, res) => {
   return res.json({ success: true, message: 'Report started. Check your inbox in a few minutes.', requestId });
 });
 
-// ── EMAIL WITH MAGIC LINK ──
-async function sendEmailMagicLink({ to, industry, company, reportUrl }) {
-  const { Resend } = require('resend');
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  const { data, error } = await resend.emails.send({
-    from: process.env.FROM_EMAIL || 'onboarding@resend.dev',
-    to: [to],
-    subject: `Your ${industry} Market Snapshot is ready`,
-    html: `
-      <div style="font-family:'DM Sans',-apple-system,sans-serif;max-width:560px;margin:0 auto;padding:32px 20px;color:#111">
-        <div style="margin-bottom:24px">
-          <span style="font-size:20px;font-weight:800;color:#0A0A0A">signal<span style="color:#0071E3">labs</span></span>
-        </div>
-        <h2 style="font-size:22px;font-weight:800;color:#0A0A0A;margin:0 0 10px;letter-spacing:-.5px">Your Market Snapshot is ready</h2>
-        <p style="font-size:15px;color:#6B7280;line-height:1.65;margin:0 0 28px">
-          ${company ? `Hi from ${company},` : 'Hi,'}<br><br>
-          Your <strong>${industry}</strong> Market Intelligence Report is ready to view. Click below to open your personalized report with real-time charts, competitor analysis, and actionable insights.
-        </p>
-        <a href="${reportUrl}" style="display:inline-block;padding:14px 28px;background:#0071E3;color:#fff;font-size:15px;font-weight:700;border-radius:10px;text-decoration:none">
-          Open my report &rarr;
-        </a>
-        <p style="font-size:12px;color:#9CA3AF;margin-top:20px;line-height:1.6">
-          Or copy this link: <a href="${reportUrl}" style="color:#0071E3">${reportUrl}</a><br>
-          This link is unique to you. Do not share it publicly.
-        </p>
-        <hr style="border:none;border-top:1px solid #E5E7EB;margin:24px 0">
-        <p style="font-size:11px;color:#9CA3AF">
-          Signal Labs &middot; AI-powered market intelligence<br>
-          <a href="https://signal-labs-omega.vercel.app" style="color:#9CA3AF">signal-labs-omega.vercel.app</a>
-        </p>
-      </div>`
-  });
-  if (error) throw new Error(`Resend error: ${JSON.stringify(error)}`);
-  return data;
-}
+// ═══════════════════════════════════════════
+// API v1 (programmatic access, key-authenticated)
+// ═══════════════════════════════════════════
+app.use('/api/v1', apiController.router);
 
-function determineSequence(ctx) {
-  if ((ctx.pains||[]).includes('investors') || ['growth','established'].includes(ctx.stage)) return 'sequence_pro_pitch';
-  if (!['United States','US'].includes(ctx.country)) return 'sequence_latam_intel';
-  if ((ctx.pains||[]).includes('competitors') || (ctx.pains||[]).includes('market-growth')) return 'sequence_intel_pitch';
-  if ((ctx.pains||[]).includes('leads') || (ctx.pains||[]).includes('growth')) return 'sequence_pulse_upsell';
-  return 'sequence_general';
-}
-
-function buildTags(ctx) {
-  const tags = [];
-  if (!['United States','US',''].includes(ctx.country||'')) tags.push('latam');
-  if (['growth','established'].includes(ctx.stage)) tags.push('high-value');
-  if ((ctx.pains||[]).includes('investors')) tags.push('fundraising');
-  if ((ctx.pains||[]).includes('expansion')) tags.push('expansion');
-  if (ctx.namedCompetitors) tags.push('competitor-aware');
-  if (ctx.stage) tags.push(`stage-${ctx.stage}`);
-  tags.push(`industry-${(ctx.industry||'').toLowerCase().replace(/[^a-z0-9]/g,'-')}`);
-  return tags;
-}
-
+// ═══════════════════════════════════════════
+// START
+// ═══════════════════════════════════════════
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Signal Labs running on http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Signal Labs v2 AAA (modular engine) running on http://localhost:${PORT}`);
+  console.log(`  Sources: ${require('./lib/core/DataSourceRegistry').getRegistered().length}`);
+  console.log(`  Modules: ${require('./lib/core/ReportEngine').getModules().length}`);
+  console.log(`  Exports: PDF, PPTX, XLSX`);
+  console.log(`  API v1:  /api/v1/reports`);
+
+  // Start scheduler (check every 60s for due reports)
+  scheduler.start(60000);
+});
