@@ -12,9 +12,11 @@ const rateLimit = require('express-rate-limit');
 const reportController = require('./lib/controllers/reportController');
 const apiController = require('./lib/controllers/apiController');
 const scheduler = require('./lib/scheduler');
-const { buildPPTX } = require('./lib/exporters/pptx');
-const { buildXLSX } = require('./lib/exporters/xlsx');
-const { buildPDF } = require('./lib/exporters/pdf');
+// Lazy-loaded exporters (puppeteer is heavy; PDF may not be available in serverless)
+let buildPPTX, buildXLSX, buildPDF;
+try { buildPPTX = require('./lib/exporters/pptx').buildPPTX; } catch (e) { console.warn('[server] PPTX exporter not available:', e.message); }
+try { buildXLSX = require('./lib/exporters/xlsx').buildXLSX; } catch (e) { console.warn('[server] XLSX exporter not available:', e.message); }
+try { buildPDF = require('./lib/exporters/pdf').buildPDF; } catch (e) { console.warn('[server] PDF exporter not available:', e.message); }
 
 const app = express();
 
@@ -36,9 +38,10 @@ app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-// Ensure dirs exist
-const reportsDir = path.join(__dirname, 'reports');
-const leadsFile = path.join(__dirname, 'leads', 'leads.json');
+// On serverless (Vercel), use /tmp which is the only writeable path
+const isServerless = !!process.env.VERCEL || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
+const reportsDir = isServerless ? '/tmp/reports' : path.join(__dirname, 'reports');
+const leadsFile = isServerless ? '/tmp/leads/leads.json' : path.join(__dirname, 'leads', 'leads.json');
 const SUPABASE_URL = process.env.SUPABASE_URL || '';
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const supabase = (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY)
@@ -111,18 +114,21 @@ app.get('/report/:token/export/:format', async (req, res) => {
   try {
     switch (format) {
       case 'pptx': {
+        if (!buildPPTX) return res.status(503).json({ error: 'PPTX export not available on this deployment' });
         const buffer = await buildPPTX(data);
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.presentationml.presentation');
         res.setHeader('Content-Disposition', `attachment; filename="SignalLabs-${data.meta.industry}-Report.pptx"`);
         return res.send(Buffer.from(buffer));
       }
       case 'xlsx': {
+        if (!buildXLSX) return res.status(503).json({ error: 'XLSX export not available on this deployment' });
         const buffer = await buildXLSX(data);
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', `attachment; filename="SignalLabs-${data.meta.industry}-Data.xlsx"`);
         return res.send(Buffer.from(buffer));
       }
       case 'pdf': {
+        if (!buildPDF) return res.status(503).json({ error: 'PDF export not available on this deployment (requires Puppeteer — use PPTX or XLSX instead)' });
         const pdfPath = await buildPDF({
           reportData: data.report, industry: data.meta.industry,
           company: data.meta.company, country: data.meta.country, userContext: data.meta
@@ -195,14 +201,20 @@ app.use('/api/v1', apiLimiter, apiController.router);
 // ═══════════════════════════════════════════
 // START
 // ═══════════════════════════════════════════
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Signal Labs v2 AAA (modular engine) running on http://localhost:${PORT}`);
-  console.log(`  Sources: ${require('./lib/core/DataSourceRegistry').getRegistered().length}`);
-  console.log(`  Modules: ${require('./lib/core/ReportEngine').getModules().length}`);
-  console.log(`  Exports: PDF, PPTX, XLSX`);
-  console.log(`  API v1:  /api/v1/reports`);
+// Start listening only when NOT in serverless environment
+if (!isServerless) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Signal Labs v2 AAA (modular engine) running on http://localhost:${PORT}`);
+    console.log(`  Sources: ${require('./lib/core/DataSourceRegistry').getRegistered().length}`);
+    console.log(`  Modules: ${require('./lib/core/ReportEngine').getModules().length}`);
+    console.log(`  Exports: ${[buildPDF && 'PDF', buildPPTX && 'PPTX', buildXLSX && 'XLSX'].filter(Boolean).join(', ')}`);
+    console.log(`  API v1:  /api/v1/reports`);
 
-  // Start scheduler (check every 60s for due reports)
-  scheduler.start(60000);
-});
+    // Start scheduler (check every 60s for due reports)
+    scheduler.start(60000);
+  });
+}
+
+// Export for Vercel serverless
+module.exports = app;

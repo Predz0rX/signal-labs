@@ -1,0 +1,9 @@
+node_modules
+.env
+.env.local
+reports/
+leads/
+.git
+.DS_Store
+*.log
+test-*.js

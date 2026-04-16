@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "lib/**",
+          "templates/**",
+          "public/**",
+          "index.html"
+        ]
+      }
+    }
+  ],
+  "routes": [
+    { "src": "/public/(.*)", "dest": "/server.js" },
+    { "src": "/(.*)", "dest": "/server.js" }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "server.js": {
+      "maxDuration": 60
+    }
+  }
+}
