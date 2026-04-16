@@ -5,6 +5,9 @@ const fs = require('fs');
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
+
 // Modular architecture
 const reportController = require('./lib/controllers/reportController');
 const apiController = require('./lib/controllers/apiController');
@@ -14,6 +17,21 @@ const { buildXLSX } = require('./lib/exporters/xlsx');
 const { buildPDF } = require('./lib/exporters/pdf');
 
 const app = express();
+
+// CORS
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || '*',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'X-API-Key', 'Authorization']
+}));
+
+// Rate limiting
+const generalLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100, message: { error: 'Too many requests. Try again in 15 minutes.' } });
+const reportLimiter = rateLimit({ windowMs: 60 * 60 * 1000, max: 10, message: { error: 'Report generation limit reached. Try again in 1 hour.' } });
+const apiLimiter = rateLimit({ windowMs: 60 * 1000, max: 30, message: { error: 'API rate limit exceeded.' } });
+
+app.use(generalLimiter);
+
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use('/public', express.static(path.join(__dirname, 'public')));
@@ -135,7 +153,7 @@ app.post('/api/seed', async (req, res) => {
 // ═══════════════════════════════════════════
 // ROUTES — Free Report Generation
 // ═══════════════════════════════════════════
-app.post('/api/report', async (req, res) => {
+app.post('/api/report', reportLimiter, async (req, res) => {
   const { email, industry, company, country, stage, team, pains, decision, competitorsList, advantage } = req.body;
 
   if (!email || !industry) return res.status(400).json({ error: 'Email and industry are required' });
@@ -172,7 +190,7 @@ app.post('/api/report', async (req, res) => {
 // ═══════════════════════════════════════════
 // API v1 (programmatic access, key-authenticated)
 // ═══════════════════════════════════════════
-app.use('/api/v1', apiController.router);
+app.use('/api/v1', apiLimiter, apiController.router);
 
 // ═══════════════════════════════════════════
 // START
