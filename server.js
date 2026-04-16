@@ -177,6 +177,24 @@ app.post('/api/report', reportLimiter, async (req, res) => {
     if (queueError) console.error('[server] Queue insert error:', queueError.message);
   }
 
+  // On serverless (Vercel): process synchronously so the lambda doesn't die before completion
+  // On local/persistent server: use setTimeout for async response
+  if (isServerless) {
+    try {
+      const result = await reportController.processReport({ ...payload, requestId });
+      return res.json({
+        success: true,
+        message: 'Report generated successfully.',
+        requestId,
+        token: result.token,
+        reportUrl: result.reportUrl
+      });
+    } catch (err) {
+      console.error('[server] Report processing failed:', err && err.stack ? err.stack : err);
+      return res.status(500).json({ success: false, error: String(err.message || err), requestId });
+    }
+  }
+
   setTimeout(async () => {
     try {
       await reportController.processReport({ ...payload, requestId });
