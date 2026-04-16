@@ -10,20 +10,13 @@
           "templates/**",
           "public/**",
           "index.html"
-        ]
+        ],
+        "maxDuration": 60
       }
     }
   ],
   "routes": [
     { "src": "/public/(.*)", "dest": "/server.js" },
     { "src": "/(.*)", "dest": "/server.js" }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  },
-  "functions": {
-    "server.js": {
-      "maxDuration": 60
-    }
-  }
+  ]
 }

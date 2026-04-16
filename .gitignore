@@ -4,3 +4,4 @@ reports/*.json
 reports/*.pdf
 leads/leads.json
 .vercel/
+.vercel
