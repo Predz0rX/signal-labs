@@ -1219,16 +1219,26 @@ async function submitReport(){
   formData.company=document.getElementById('f_company').value||'';
   var btn=document.getElementById('submitReportBtn');
   btn.textContent='Generating your report...';btn.disabled=true;
+  btn.textContent='Generating your report... (this takes ~3 minutes)';
   try{
-    var res=await fetch('https://signal-labs-wddk.onrender.com/api/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(formData)});
+    var res=await fetch('/api/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(formData)});
     var data=await res.json();
     if(data.success){
       btn.style.display='none';
       var msg=document.getElementById('submitMsg');
       msg.style.display='block';
-      msg.innerHTML='Report on the way! Check your inbox in about 5 minutes.<br><span style="font-size:12px;color:#6B7280;font-weight:400">Check spam if you do not see it.</span>';
+      if(data.reportUrl || data.token){
+        var url = data.reportUrl || ('/report/'+data.token);
+        // Strip localhost if present (serverless fallback)
+        if(url.indexOf('localhost')>=0) url = '/report/'+data.token;
+        msg.innerHTML='Report ready! <a href="'+url+'" style="color:#0071E3;font-weight:700;text-decoration:underline">Click here to view it →</a><br><span style="font-size:12px;color:#6B7280;font-weight:400">Also check your inbox if email is configured.</span>';
+        // Auto-redirect after 2 seconds
+        setTimeout(function(){ window.location.href = url; }, 2000);
+      } else {
+        msg.innerHTML='Report on the way! Check your inbox in about 5 minutes.<br><span style="font-size:12px;color:#6B7280;font-weight:400">Check spam if you do not see it.</span>';
+      }
     } else {btn.textContent='Generate my report';btn.disabled=false;alert(data.error||'Something went wrong.');}
-  } catch(e){btn.textContent='Generate my report';btn.disabled=false;alert('Connection error. Please try again.');}
+  } catch(e){btn.textContent='Generate my report';btn.disabled=false;alert('Connection error. Report generation takes 2-3 minutes — browser may have timed out. Try again or contact support.');}
 }
 </script>
 </body>
